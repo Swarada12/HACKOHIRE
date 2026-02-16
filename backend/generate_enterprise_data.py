@@ -10,9 +10,9 @@ DAYS_OF_HISTORY = 180
 START_DATE = datetime.now() - timedelta(days=DAYS_OF_HISTORY)
 
 def generate_enterprise_dataset():
-    print(f"Generating enterprise dataset for {NUM_CUSTOMERS} customers...")
+    print(f"Generating enterprise dataset with legacy parity for {NUM_CUSTOMERS} customers...")
     
-    # 1. Customers Core (Demographics & Baseline)
+    # 1. Customers Core (Demographics & Baseline + Legacy Banking Fields)
     customers = []
     cities = ['Mumbai', 'Delhi', 'Bangalore', 'Hyderabad', 'Chennai', 'Kolkata', 'Pune', 'Ahmedabad', 'Jaipur', 'Lucknow']
     products = ['Personal Loan', 'Home Loan', 'Credit Card', 'Auto Loan', 'Gold Loan']
@@ -23,14 +23,25 @@ def generate_enterprise_dataset():
     for i in range(NUM_CUSTOMERS):
         c_id = f"CUSR-{100000 + i}"
         name = f"{np.random.choice(first_names)} {np.random.choice(last_names)}"
+        income = np.random.randint(400000, 5000000)
+        
+        # Legacy Fields Parity
+        monthly_salary = income / 12
+        delay = np.random.choice([0, 0, 0, 0, 1, 2, 5, 8, 12, 15], p=[0.4, 0.2, 0.1, 0.1, 0.05, 0.05, 0.04, 0.03, 0.02, 0.01])
+        
         customers.append({
             'customer_id': c_id,
             'name': name,
             'age': np.random.randint(22, 65),
             'city': np.random.choice(cities),
             'product_type': np.random.choice(products),
-            'annual_income': np.random.randint(400000, 5000000),
+            'annual_income': income,
+            'monthly_salary': round(monthly_salary, 2),
             'credit_score': np.random.randint(600, 850),
+            'credit_utilization': np.random.randint(10, 95),
+            'savings_change_pct': np.random.randint(-40, 20),
+            'loan_amount': np.random.randint(50000, 5000000),
+            'current_salary_delay_days': delay,
             'employment_type': np.random.choice(['Salaried', 'Self-Employed', 'Business']),
             'aadhar_no': f"{np.random.randint(1000, 9999)}-{np.random.randint(1000, 9999)}-{np.random.randint(1000, 9999)}",
             'pan_no': f"{chr(np.random.randint(65, 90))}{chr(np.random.randint(65, 90))}{chr(np.random.randint(65, 90))}P{np.random.randint(1000, 9999)}{chr(np.random.randint(65, 90))}",
@@ -43,18 +54,14 @@ def generate_enterprise_dataset():
 
     # 2. Salary Credits (Last 12 months)
     salaries = []
-    for c_id in df_customers['customer_id']:
-        income = df_customers[df_customers['customer_id'] == c_id]['annual_income'].values[0]
-        monthly_salary = income / 12
+    for _, row in df_customers.iterrows():
+        c_id = row['customer_id']
+        monthly_salary = row['monthly_salary']
         
-        # Base credit date (1st of month)
         for m in range(12):
             date = datetime.now() - timedelta(days=30 * m)
-            # Add some variability/drift (mostly 0-2 days, but some stressed)
-            is_stressed = np.random.random() < 0.1
-            delay = np.random.randint(0, 3) 
-            if is_stressed:
-                delay = np.random.randint(5, 15) # Risk Signal
+            # Sync with current_salary_delay_days for the latest month
+            delay = row['current_salary_delay_days'] if m == 0 else np.random.randint(0, 3)
             
             credit_date = datetime(date.year, date.month, 1) + timedelta(days=delay)
             salaries.append({
@@ -70,8 +77,6 @@ def generate_enterprise_dataset():
     # 3. Payment History (Transactions)
     payments = []
     categories = ['Utility', 'Rent', 'EMI', 'Shopping', 'Food', 'Gambling', 'Lending App', 'Entertainment', 'Investment']
-    
-    # Generate ~50 transactions per customer
     for c_id in df_customers['customer_id']:
         num_tx = np.random.randint(30, 70)
         for _ in range(num_tx):
@@ -79,7 +84,6 @@ def generate_enterprise_dataset():
             amt = np.random.exponential(2000)
             if cat == 'Rent': amt = np.random.uniform(10000, 40000)
             if cat == 'EMI': amt = np.random.uniform(5000, 25000)
-            if cat == 'Gambling' or cat == 'Lending App': amt = np.random.uniform(2000, 15000)
             
             date = datetime.now() - timedelta(days=np.random.randint(0, DAYS_OF_HISTORY))
             payments.append({
@@ -90,22 +94,18 @@ def generate_enterprise_dataset():
                 'amount': round(amt, 2),
                 'method': np.random.choice(['UPI', 'Debit Card', 'Net Banking', 'Auto-Debit'])
             })
-            
     pd.DataFrame(payments).to_csv("payment_history.csv", index=False)
     print("✓ Created payment_history.csv")
 
     # 4. App Activity Logs
     activity = []
     actions = ['Login', 'Check Balance', 'Statement View', 'Loan Inquiry', 'Support Chat', 'Profile Update']
-    
     for c_id in df_customers['customer_id']:
-        # High risk customers might check balance more often or inquire about loans
         num_logs = np.random.randint(10, 100)
         for _ in range(num_logs):
             action = np.random.choice(actions)
             date = datetime.now() - timedelta(days=np.random.randint(0, DAYS_OF_HISTORY))
             hour = np.random.randint(0, 24)
-            # Signal: High risk often logins late at night or checks balance repeatedly
             activity.append({
                 'customer_id': c_id,
                 'timestamp': date.replace(hour=hour).strftime('%Y-%m-%d %H:%M:%S'),
@@ -113,11 +113,10 @@ def generate_enterprise_dataset():
                 'session_duration_sec': np.random.randint(10, 600),
                 'device': np.random.choice(['iOS', 'Android', 'Web'])
             })
-            
     pd.DataFrame(activity).to_csv("app_activity.csv", index=False)
     print("✓ Created app_activity.csv")
 
-    print("\nEnterprise Data Generation Complete.")
+    print("\nEnterprise Data Generation with Parity Complete.")
 
 if __name__ == "__main__":
     generate_enterprise_dataset()
