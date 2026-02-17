@@ -1,0 +1,9 @@
+Feature Store: Successfully loaded all 10000 customer sources.
+2026-02-17T01:58:46+0530 [INFO] [cli] Starting production HTTP BentoServer from "service:BankRiskService" listening on http://localhost:8000 (Press CTRL+C to quit)
+Feature Store: Successfully loaded all 10000 customer sources.
+2026-02-17T01:58:48+0530 [INFO] [entry_service:bank_risk_service:1] Service bank_risk_service initialized
+2026-02-17T01:58:50+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:54413 (scheme=http,method=POST,path=/analyze_customer_risk,type=application/json,length=44) (status=200,type=application/json,length=3205) 268.586ms (trace=b4c2ba079cc1977ba0456fa4c4d2e237,span=ae0089a091d2b477,sampled=0,service.name=None)
+2026-02-17T01:58:54+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:51221 (scheme=http,method=POST,path=/get_dashboard_stats,type=,length=0) (status=200,type=application/json,length=8610) 397.923ms (trace=202dbac75ffd6551a83b85237adf08a4,span=da179e6908a41ff6,sampled=0,service.name=None)
+2026-02-17T01:58:54+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:51222 (scheme=http,method=POST,path=/get_dashboard_stats,type=,length=0) (status=200,type=application/json,length=8610) 347.478ms (trace=4d2d5a1ce7d66d0132c5db0ffca0fa11,span=6076286ba0860e83,sampled=0,service.name=None)
+2026-02-17T01:58:56+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:61564 (scheme=http,method=POST,path=/list_customers,type=application/json,length=36) (status=200,type=application/json,length=463572) 2051.680ms (trace=d0b6ebc495782cd3663490293fcf54cd,span=37d79e275227ed2d,sampled=0,service.name=None)
+2026-02-17T01:58:57+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:61565 (scheme=http,method=POST,path=/list_customers,type=application/json,length=36) (status=200,type=application/json,length=463572) 850.007ms (trace=3989a464369d3fd451de02d0115e265a,span=fa7e3bd9e3fcd726,sampled=0,service.name=None)

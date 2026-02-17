@@ -1,0 +1,184 @@
+Feature Store: Successfully loaded all 10000 customer sources.
+2026-02-17T01:44:29+0530 [INFO] [cli] Starting production HTTP BentoServer from "service:BankRiskService" listening on http://localhost:8000 (Press CTRL+C to quit)
+Feature Store: Successfully loaded all 10000 customer sources.
+2026-02-17T01:44:32+0530 [INFO] [entry_service:bank_risk_service:1] Service bank_risk_service initialized
+2026-02-17T01:44:35+0530 [ERROR] [entry_service:bank_risk_service:1] Exception on /analyze_customer_risk [POST] (trace=8ff5173dc83333ce3af1e2be46da9214,span=eb5bfecb99f4fab7,sampled=0,service.name=None)
+Traceback (most recent call last):
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 719, in api_endpoint_wrapper
+    resp = await self.api_endpoint(name, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 807, in api_endpoint
+    output = await func(*call_args, **call_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\HACKOHIRE\backend\service.py", line 110, in analyze_customer_risk
+    detailed_data = feature_store.get_customer_detailed(input_data.customer_id)
+  File "C:\Users\RRP\HACKOHIRE\backend\feature_store.py", line 197, in get_customer_detailed
+    features = self.compute_all_features(customer_id)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'FeatureStore' object has no attribute 'compute_all_features'
+2026-02-17T01:44:35+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:56746 (scheme=http,method=POST,path=/analyze_customer_risk,type=application/json,length=44) (status=500,type=application/json,length=74) 8.371ms (trace=8ff5173dc83333ce3af1e2be46da9214,span=eb5bfecb99f4fab7,sampled=0,service.name=None)
+2026-02-17T01:44:36+0530 [ERROR] [entry_service:bank_risk_service:1] Exception on /analyze_customer_risk [POST] (trace=40f1109c44a95429dc1a700d1671f43b,span=d7df398a1202de4f,sampled=0,service.name=None)
+Traceback (most recent call last):
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 719, in api_endpoint_wrapper
+    resp = await self.api_endpoint(name, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 807, in api_endpoint
+    output = await func(*call_args, **call_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\HACKOHIRE\backend\service.py", line 110, in analyze_customer_risk
+    detailed_data = feature_store.get_customer_detailed(input_data.customer_id)
+  File "C:\Users\RRP\HACKOHIRE\backend\feature_store.py", line 197, in get_customer_detailed
+    features = self.compute_all_features(customer_id)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'FeatureStore' object has no attribute 'compute_all_features'
+2026-02-17T01:44:36+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:56660 (scheme=http,method=POST,path=/analyze_customer_risk,type=application/json,length=44) (status=500,type=application/json,length=74) 6.015ms (trace=40f1109c44a95429dc1a700d1671f43b,span=d7df398a1202de4f,sampled=0,service.name=None)
+2026-02-17T01:44:38+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:56661 (scheme=http,method=POST,path=/get_dashboard_stats,type=,length=0) (status=200,type=application/json,length=8610) 507.761ms (trace=c91fc1a8b2390ce2621a2ee39b264a77,span=a3ad9bf081d36243,sampled=0,service.name=None)
+2026-02-17T01:44:39+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:56662 (scheme=http,method=POST,path=/get_dashboard_stats,type=,length=0) (status=200,type=application/json,length=8610) 335.161ms (trace=60444471dff495061ac45d8e34d2eb89,span=98364fb8d83d1b3c,sampled=0,service.name=None)
+2026-02-17T01:44:42+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:56663 (scheme=http,method=POST,path=/list_customers,type=application/json,length=41) (status=200,type=application/json,length=76915) 3080.433ms (trace=7b99ebce2c99e60d8999450d1c899732,span=3aaf695747c07a2b,sampled=0,service.name=None)
+2026-02-17T01:44:45+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:56664 (scheme=http,method=POST,path=/list_customers,type=application/json,length=41) (status=200,type=application/json,length=76915) 3244.771ms (trace=cc46e02b6cf3c783dcc4a6459b93f8f5,span=fdf84352e9fb836b,sampled=0,service.name=None)
+2026-02-17T01:44:48+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:56665 (scheme=http,method=POST,path=/list_customers,type=application/json,length=37) (status=200,type=application/json,length=217822) 3319.197ms (trace=9dd83218735a0d7e28c19c27c0fa9452,span=c0277ad9dfd9a54a,sampled=0,service.name=None)
+2026-02-17T01:44:51+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:57003 (scheme=http,method=POST,path=/list_customers,type=application/json,length=37) (status=200,type=application/json,length=217822) 2760.736ms (trace=00c595796ff087b66e0d51988bc974ee,span=cf0ae2aab8dd8c7b,sampled=0,service.name=None)
+2026-02-17T01:44:55+0530 [ERROR] [entry_service:bank_risk_service:1] Exception on /analyze_customer_risk [POST] (trace=67da808c4c09e22778fe3ff92c7b259f,span=806eb27e7e74ef77,sampled=0,service.name=None)
+Traceback (most recent call last):
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 719, in api_endpoint_wrapper
+    resp = await self.api_endpoint(name, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 807, in api_endpoint
+    output = await func(*call_args, **call_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\HACKOHIRE\backend\service.py", line 110, in analyze_customer_risk
+    detailed_data = feature_store.get_customer_detailed(input_data.customer_id)
+  File "C:\Users\RRP\HACKOHIRE\backend\feature_store.py", line 197, in get_customer_detailed
+    features = self.compute_all_features(customer_id)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'FeatureStore' object has no attribute 'compute_all_features'
+2026-02-17T01:44:55+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:59713 (scheme=http,method=POST,path=/analyze_customer_risk,type=application/json,length=44) (status=500,type=application/json,length=74) 6.407ms (trace=67da808c4c09e22778fe3ff92c7b259f,span=806eb27e7e74ef77,sampled=0,service.name=None)
+2026-02-17T01:44:55+0530 [ERROR] [entry_service:bank_risk_service:1] Exception on /analyze_customer_risk [POST] (trace=62afaca44d65441ce01f33bc4fa8a2dd,span=ecafe73bfaa0f419,sampled=0,service.name=None)
+Traceback (most recent call last):
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 719, in api_endpoint_wrapper
+    resp = await self.api_endpoint(name, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 807, in api_endpoint
+    output = await func(*call_args, **call_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\HACKOHIRE\backend\service.py", line 110, in analyze_customer_risk
+    detailed_data = feature_store.get_customer_detailed(input_data.customer_id)
+  File "C:\Users\RRP\HACKOHIRE\backend\feature_store.py", line 197, in get_customer_detailed
+    features = self.compute_all_features(customer_id)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'FeatureStore' object has no attribute 'compute_all_features'
+2026-02-17T01:44:55+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:59714 (scheme=http,method=POST,path=/analyze_customer_risk,type=application/json,length=44) (status=500,type=application/json,length=74) 5.058ms (trace=62afaca44d65441ce01f33bc4fa8a2dd,span=ecafe73bfaa0f419,sampled=0,service.name=None)
+2026-02-17T01:45:06+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:52357 (scheme=http,method=POST,path=/list_customers,type=application/json,length=36) (status=200,type=application/json,length=463572) 2096.306ms (trace=e89f331c39b25cf6b426d762f3a176e9,span=e5dada2274a4dc57,sampled=0,service.name=None)
+2026-02-17T01:45:08+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:52358 (scheme=http,method=POST,path=/list_customers,type=application/json,length=36) (status=200,type=application/json,length=463572) 2143.126ms (trace=79b72ee1fbbcea378e10cf61a2881439,span=b6c808e127adb457,sampled=0,service.name=None)
+2026-02-17T01:45:26+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:55054 (scheme=http,method=POST,path=/get_dashboard_stats,type=,length=0) (status=200,type=application/json,length=8610) 302.334ms (trace=8de616107191d1ec04be98c8f604052a,span=b5133208335ec685,sampled=0,service.name=None)
+2026-02-17T01:45:26+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:55055 (scheme=http,method=POST,path=/get_dashboard_stats,type=,length=0) (status=200,type=application/json,length=8610) 254.650ms (trace=d5069f822a1bdd4e0a87bfc00bb5b80d,span=151223baff13a8d8,sampled=0,service.name=None)
+2026-02-17T01:45:28+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:52239 (scheme=http,method=POST,path=/list_customers,type=application/json,length=41) (status=200,type=application/json,length=76915) 1823.772ms (trace=f304ae2dba7dd4a168541914669189a6,span=9a0f0c973012ca05,sampled=0,service.name=None)
+2026-02-17T01:45:30+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:60772 (scheme=http,method=POST,path=/list_customers,type=application/json,length=41) (status=200,type=application/json,length=76915) 1991.627ms (trace=9f4eec6b1d624a8608835543f4bb488c,span=eaf22ec5081b29ee,sampled=0,service.name=None)
+2026-02-17T01:45:32+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:53229 (scheme=http,method=POST,path=/list_customers,type=application/json,length=37) (status=200,type=application/json,length=217822) 2160.081ms (trace=3877a0f70837ce148cd9eeac5574abc9,span=df72689c8357fbeb,sampled=0,service.name=None)
+2026-02-17T01:45:35+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:56013 (scheme=http,method=POST,path=/list_customers,type=application/json,length=37) (status=200,type=application/json,length=217822) 2778.180ms (trace=f7e56c5dd29cc2f1e06c332514ac501a,span=c878a30038db1fca,sampled=0,service.name=None)
+2026-02-17T01:45:42+0530 [ERROR] [entry_service:bank_risk_service:1] Exception on /analyze_customer_risk [POST] (trace=e175a844ab6c6900d5f4727a12764d3c,span=43795c956ce50296,sampled=0,service.name=None)
+Traceback (most recent call last):
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 719, in api_endpoint_wrapper
+    resp = await self.api_endpoint(name, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 807, in api_endpoint
+    output = await func(*call_args, **call_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\HACKOHIRE\backend\service.py", line 110, in analyze_customer_risk
+    detailed_data = feature_store.get_customer_detailed(input_data.customer_id)
+  File "C:\Users\RRP\HACKOHIRE\backend\feature_store.py", line 197, in get_customer_detailed
+    features = self.compute_all_features(customer_id)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'FeatureStore' object has no attribute 'compute_all_features'
+2026-02-17T01:45:42+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:64349 (scheme=http,method=POST,path=/analyze_customer_risk,type=application/json,length=44) (status=500,type=application/json,length=74) 4.582ms (trace=e175a844ab6c6900d5f4727a12764d3c,span=43795c956ce50296,sampled=0,service.name=None)
+2026-02-17T01:45:42+0530 [ERROR] [entry_service:bank_risk_service:1] Exception on /analyze_customer_risk [POST] (trace=8dc02541e08fa74d9a56a1afc914bcf2,span=7b831843f53bc36b,sampled=0,service.name=None)
+Traceback (most recent call last):
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 719, in api_endpoint_wrapper
+    resp = await self.api_endpoint(name, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 807, in api_endpoint
+    output = await func(*call_args, **call_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\HACKOHIRE\backend\service.py", line 110, in analyze_customer_risk
+    detailed_data = feature_store.get_customer_detailed(input_data.customer_id)
+  File "C:\Users\RRP\HACKOHIRE\backend\feature_store.py", line 197, in get_customer_detailed
+    features = self.compute_all_features(customer_id)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'FeatureStore' object has no attribute 'compute_all_features'
+2026-02-17T01:45:42+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:64350 (scheme=http,method=POST,path=/analyze_customer_risk,type=application/json,length=44) (status=500,type=application/json,length=74) 6.627ms (trace=8dc02541e08fa74d9a56a1afc914bcf2,span=7b831843f53bc36b,sampled=0,service.name=None)
+2026-02-17T01:45:44+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:61486 (scheme=http,method=POST,path=/get_dashboard_stats,type=,length=0) (status=200,type=application/json,length=8610) 422.548ms (trace=e0b78a8f04e218d02f3eb26ea8b0eb63,span=61ed5fcec73d8fb3,sampled=0,service.name=None)
+2026-02-17T01:45:45+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:61487 (scheme=http,method=POST,path=/get_dashboard_stats,type=,length=0) (status=200,type=application/json,length=8610) 256.261ms (trace=ae8548d3e049c367ea8a150af3bd22a3,span=081e36cea4edc7a4,sampled=0,service.name=None)
+2026-02-17T01:45:47+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:61359 (scheme=http,method=POST,path=/list_customers,type=application/json,length=41) (status=200,type=application/json,length=76915) 1924.442ms (trace=7c9a90278692838a743ced0a5faea2c3,span=27afad183cf268d6,sampled=0,service.name=None)
+2026-02-17T01:45:49+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:54051 (scheme=http,method=POST,path=/list_customers,type=application/json,length=41) (status=200,type=application/json,length=76915) 1911.212ms (trace=72130b25a95e990d8ee61cb05e06aca1,span=af9e0cd9aecb114d,sampled=0,service.name=None)
+2026-02-17T01:45:50+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:56397 (scheme=http,method=POST,path=/list_customers,type=application/json,length=37) (status=200,type=application/json,length=217822) 1745.989ms (trace=3786a86916bc51def3faca691018d180,span=024acc6c3c481540,sampled=0,service.name=None)
+2026-02-17T01:45:52+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:54213 (scheme=http,method=POST,path=/list_customers,type=application/json,length=37) (status=200,type=application/json,length=217822) 1933.655ms (trace=444f1a5c361425691d1ca7495815d597,span=e4822e0d0032c933,sampled=0,service.name=None)
+2026-02-17T01:45:53+0530 [ERROR] [entry_service:bank_risk_service:1] Exception on /analyze_customer_risk [POST] (trace=2897c4998d12ab8c3cf1a675f86b4689,span=45261f5d63f2720e,sampled=0,service.name=None)
+Traceback (most recent call last):
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 719, in api_endpoint_wrapper
+    resp = await self.api_endpoint(name, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 807, in api_endpoint
+    output = await func(*call_args, **call_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\HACKOHIRE\backend\service.py", line 110, in analyze_customer_risk
+    detailed_data = feature_store.get_customer_detailed(input_data.customer_id)
+  File "C:\Users\RRP\HACKOHIRE\backend\feature_store.py", line 197, in get_customer_detailed
+    features = self.compute_all_features(customer_id)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'FeatureStore' object has no attribute 'compute_all_features'
+2026-02-17T01:45:53+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:62063 (scheme=http,method=POST,path=/analyze_customer_risk,type=application/json,length=44) (status=500,type=application/json,length=74) 7.597ms (trace=2897c4998d12ab8c3cf1a675f86b4689,span=45261f5d63f2720e,sampled=0,service.name=None)
+2026-02-17T01:45:53+0530 [ERROR] [entry_service:bank_risk_service:1] Exception on /analyze_customer_risk [POST] (trace=6400bdc9385ec8f3252a9907c507f92e,span=bfac77b992410033,sampled=0,service.name=None)
+Traceback (most recent call last):
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 719, in api_endpoint_wrapper
+    resp = await self.api_endpoint(name, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 807, in api_endpoint
+    output = await func(*call_args, **call_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\HACKOHIRE\backend\service.py", line 110, in analyze_customer_risk
+    detailed_data = feature_store.get_customer_detailed(input_data.customer_id)
+  File "C:\Users\RRP\HACKOHIRE\backend\feature_store.py", line 197, in get_customer_detailed
+    features = self.compute_all_features(customer_id)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'FeatureStore' object has no attribute 'compute_all_features'
+2026-02-17T01:45:53+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:62064 (scheme=http,method=POST,path=/analyze_customer_risk,type=application/json,length=44) (status=500,type=application/json,length=74) 5.975ms (trace=6400bdc9385ec8f3252a9907c507f92e,span=bfac77b992410033,sampled=0,service.name=None)
+2026-02-17T01:45:55+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:58441 (scheme=http,method=POST,path=/get_dashboard_stats,type=,length=0) (status=200,type=application/json,length=8610) 256.125ms (trace=72c6896c1530db27889efdd71ce6158e,span=3e43d363ff1ce684,sampled=0,service.name=None)
+2026-02-17T01:45:55+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:58442 (scheme=http,method=POST,path=/get_dashboard_stats,type=,length=0) (status=200,type=application/json,length=8610) 275.753ms (trace=f243445b2ec4ea1e22624c340b0eb735,span=e2029e20ac80f5cb,sampled=0,service.name=None)
+2026-02-17T01:45:56+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:53753 (scheme=http,method=POST,path=/list_customers,type=application/json,length=41) (status=200,type=application/json,length=76915) 1218.253ms (trace=2e8d7c530b6644ab1d3457ab7304b707,span=1fa8d77a0e0cc0ba,sampled=0,service.name=None)
+2026-02-17T01:45:57+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:49912 (scheme=http,method=POST,path=/list_customers,type=application/json,length=41) (status=200,type=application/json,length=76915) 766.931ms (trace=a6ac7e5fe48073673cf07ce4d654ca34,span=6cb1e4afa6fce9c2,sampled=0,service.name=None)
+2026-02-17T01:45:58+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:56343 (scheme=http,method=POST,path=/list_customers,type=application/json,length=37) (status=200,type=application/json,length=217822) 790.449ms (trace=c164a04f4bcd9ee94e0252d5d7d43fcb,span=4d9acc3e806d027b,sampled=0,service.name=None)
+2026-02-17T01:45:59+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:62811 (scheme=http,method=POST,path=/list_customers,type=application/json,length=37) (status=200,type=application/json,length=217822) 918.701ms (trace=ef77038a07592652b6f0d28563d26b75,span=0989589a336d9309,sampled=0,service.name=None)
+2026-02-17T01:46:24+0530 [ERROR] [entry_service:bank_risk_service:1] Exception on /analyze_customer_risk [POST] (trace=0f28031b5f91b5988486a049a1628646,span=1cd183140f43553c,sampled=0,service.name=None)
+Traceback (most recent call last):
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 719, in api_endpoint_wrapper
+    resp = await self.api_endpoint(name, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 807, in api_endpoint
+    output = await func(*call_args, **call_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\HACKOHIRE\backend\service.py", line 110, in analyze_customer_risk
+    detailed_data = feature_store.get_customer_detailed(input_data.customer_id)
+  File "C:\Users\RRP\HACKOHIRE\backend\feature_store.py", line 197, in get_customer_detailed
+    features = self.compute_all_features(customer_id)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'FeatureStore' object has no attribute 'compute_all_features'
+2026-02-17T01:46:24+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:55484 (scheme=http,method=POST,path=/analyze_customer_risk,type=application/json,length=44) (status=500,type=application/json,length=74) 5.762ms (trace=0f28031b5f91b5988486a049a1628646,span=1cd183140f43553c,sampled=0,service.name=None)
+2026-02-17T01:46:24+0530 [ERROR] [entry_service:bank_risk_service:1] Exception on /analyze_customer_risk [POST] (trace=614874e3404ef8ad87661701d8628193,span=b5816cf1f690f0f3,sampled=0,service.name=None)
+Traceback (most recent call last):
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 719, in api_endpoint_wrapper
+    resp = await self.api_endpoint(name, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 807, in api_endpoint
+    output = await func(*call_args, **call_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\HACKOHIRE\backend\service.py", line 110, in analyze_customer_risk
+    detailed_data = feature_store.get_customer_detailed(input_data.customer_id)
+  File "C:\Users\RRP\HACKOHIRE\backend\feature_store.py", line 197, in get_customer_detailed
+    features = self.compute_all_features(customer_id)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'FeatureStore' object has no attribute 'compute_all_features'
+2026-02-17T01:46:24+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:55485 (scheme=http,method=POST,path=/analyze_customer_risk,type=application/json,length=44) (status=500,type=application/json,length=74) 4.706ms (trace=614874e3404ef8ad87661701d8628193,span=b5816cf1f690f0f3,sampled=0,service.name=None)
+2026-02-17T01:46:27+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:52495 (scheme=http,method=POST,path=/get_dashboard_stats,type=,length=0) (status=200,type=application/json,length=8610) 259.340ms (trace=fdcfda6f9838410e6770a25bc34f7cef,span=3b35edf6d663f715,sampled=0,service.name=None)
+2026-02-17T01:46:27+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:52496 (scheme=http,method=POST,path=/get_dashboard_stats,type=,length=0) (status=200,type=application/json,length=8610) 254.328ms (trace=ac75c104ab20a6338a7d5692060da1c1,span=a5d350cd48b490cd,sampled=0,service.name=None)
+2026-02-17T01:46:48+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:58889 (scheme=http,method=POST,path=/list_customers,type=application/json,length=36) (status=200,type=application/json,length=463572) 1455.266ms (trace=760e48173ba6241ce8d5defb3b4fbba9,span=049c5d50e5f9fa07,sampled=0,service.name=None)
+2026-02-17T01:46:49+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:58890 (scheme=http,method=POST,path=/list_customers,type=application/json,length=36) (status=200,type=application/json,length=463572) 695.637ms (trace=4936e995035856aa5ca4ff3be5cf96d5,span=8e8b19fb4bef6858,sampled=0,service.name=None)

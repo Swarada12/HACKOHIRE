@@ -1,0 +1,131 @@
+Feature Store: Loaded 10000 active loan records.
+Feature Store: Successfully loaded all 10000 customer sources.
+2026-02-17T02:22:12+0530 [INFO] [cli] Starting production HTTP BentoServer from "service:BankRiskService" listening on http://localhost:8000 (Press CTRL+C to quit)
+Feature Store: Loaded 10000 active loan records.
+Feature Store: Successfully loaded all 10000 customer sources.
+2026-02-17T02:22:15+0530 [INFO] [entry_service:bank_risk_service:1] Service bank_risk_service initialized
+2026-02-17T02:22:31+0530 [ERROR] [entry_service:bank_risk_service:1] Exception on /analyze_customer_risk [POST] (trace=89f06f5eaedb6f7ce57d5065ef4d9760,span=7e1957cd44acf01f,sampled=0,service.name=None)
+Traceback (most recent call last):
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 719, in api_endpoint_wrapper
+    resp = await self.api_endpoint(name, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 807, in api_endpoint
+    output = await func(*call_args, **call_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\HACKOHIRE\backend\service.py", line 113, in analyze_customer_risk
+    detailed_data = feature_store.get_customer_detailed(input_data.customer_id)
+  File "C:\Users\RRP\HACKOHIRE\backend\feature_store.py", line 104, in get_customer_detailed
+    f['f_monthly_emi'] = float(loan_record.get('monthly_emi', core['monthly_emi']))
+                                                              ~~~~^^^^^^^^^^^^^^^
+KeyError: 'monthly_emi'
+2026-02-17T02:22:31+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:56257 (scheme=http,method=POST,path=/analyze_customer_risk,type=application/json,length=44) (status=500,type=application/json,length=74) 136.402ms (trace=89f06f5eaedb6f7ce57d5065ef4d9760,span=7e1957cd44acf01f,sampled=0,service.name=None)
+2026-02-17T02:22:36+0530 [ERROR] [entry_service:bank_risk_service:1] Exception on /analyze_customer_risk [POST] (trace=9726d6aadf383698c6c6112537000bfc,span=16c56776eda23525,sampled=0,service.name=None)
+Traceback (most recent call last):
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 719, in api_endpoint_wrapper
+    resp = await self.api_endpoint(name, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 807, in api_endpoint
+    output = await func(*call_args, **call_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\HACKOHIRE\backend\service.py", line 113, in analyze_customer_risk
+    detailed_data = feature_store.get_customer_detailed(input_data.customer_id)
+  File "C:\Users\RRP\HACKOHIRE\backend\feature_store.py", line 104, in get_customer_detailed
+    f['f_monthly_emi'] = float(loan_record.get('monthly_emi', core['monthly_emi']))
+                                                              ~~~~^^^^^^^^^^^^^^^
+KeyError: 'monthly_emi'
+2026-02-17T02:22:36+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:64026 (scheme=http,method=POST,path=/analyze_customer_risk,type=application/json,length=44) (status=500,type=application/json,length=74) 109.217ms (trace=9726d6aadf383698c6c6112537000bfc,span=16c56776eda23525,sampled=0,service.name=None)
+2026-02-17T02:22:40+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:64027 (scheme=http,method=POST,path=/list_customers,type=application/json,length=36) (status=200,type=application/json,length=463572) 2330.811ms (trace=ae86c483cd04836c32a749e4143c6177,span=1d20ba6cab18a621,sampled=0,service.name=None)
+2026-02-17T02:22:43+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:64028 (scheme=http,method=POST,path=/list_customers,type=application/json,length=36) (status=200,type=application/json,length=463572) 2480.579ms (trace=d9e690fc9182d664fc176ace6ddbbe2e,span=8cf4df959d3de183,sampled=0,service.name=None)
+2026-02-17T02:22:47+0530 [ERROR] [entry_service:bank_risk_service:1] Exception on /analyze_customer_risk [POST] (trace=387486ee9946cf0e60a7d372134fe2de,span=95e90ee74e86eafa,sampled=0,service.name=None)
+Traceback (most recent call last):
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 719, in api_endpoint_wrapper
+    resp = await self.api_endpoint(name, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 807, in api_endpoint
+    output = await func(*call_args, **call_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\HACKOHIRE\backend\service.py", line 113, in analyze_customer_risk
+    detailed_data = feature_store.get_customer_detailed(input_data.customer_id)
+  File "C:\Users\RRP\HACKOHIRE\backend\feature_store.py", line 104, in get_customer_detailed
+    f['f_monthly_emi'] = float(loan_record.get('monthly_emi', core['monthly_emi']))
+                                                              ~~~~^^^^^^^^^^^^^^^
+KeyError: 'monthly_emi'
+2026-02-17T02:22:47+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:51288 (scheme=http,method=POST,path=/analyze_customer_risk,type=application/json,length=44) (status=500,type=application/json,length=74) 188.721ms (trace=387486ee9946cf0e60a7d372134fe2de,span=95e90ee74e86eafa,sampled=0,service.name=None)
+2026-02-17T02:22:47+0530 [ERROR] [entry_service:bank_risk_service:1] Exception on /analyze_customer_risk [POST] (trace=530635b62d43415704d596ebc33ab507,span=7c10d350b724ee3d,sampled=0,service.name=None)
+Traceback (most recent call last):
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 719, in api_endpoint_wrapper
+    resp = await self.api_endpoint(name, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 807, in api_endpoint
+    output = await func(*call_args, **call_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\HACKOHIRE\backend\service.py", line 113, in analyze_customer_risk
+    detailed_data = feature_store.get_customer_detailed(input_data.customer_id)
+  File "C:\Users\RRP\HACKOHIRE\backend\feature_store.py", line 104, in get_customer_detailed
+    f['f_monthly_emi'] = float(loan_record.get('monthly_emi', core['monthly_emi']))
+                                                              ~~~~^^^^^^^^^^^^^^^
+KeyError: 'monthly_emi'
+2026-02-17T02:22:47+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:51289 (scheme=http,method=POST,path=/analyze_customer_risk,type=application/json,length=44) (status=500,type=application/json,length=74) 136.181ms (trace=530635b62d43415704d596ebc33ab507,span=7c10d350b724ee3d,sampled=0,service.name=None)
+2026-02-17T02:22:53+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:63875 (scheme=http,method=POST,path=/list_customers,type=application/json,length=36) (status=200,type=application/json,length=463572) 2341.097ms (trace=8d636bf1e4f91915c5f11b385f686f44,span=0151ae524312b3d8,sampled=0,service.name=None)
+2026-02-17T02:22:55+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:63876 (scheme=http,method=POST,path=/list_customers,type=application/json,length=36) (status=200,type=application/json,length=463572) 2673.334ms (trace=d0d1a1b29d49fc4833a146a831b7898a,span=36d64d111272610c,sampled=0,service.name=None)
+2026-02-17T02:22:55+0530 [ERROR] [entry_service:bank_risk_service:1] Exception on /analyze_customer_risk [POST] (trace=d83ef731f2d598db9611b9ebba6cfd75,span=a0e657bc1ecf50f6,sampled=0,service.name=None)
+Traceback (most recent call last):
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 719, in api_endpoint_wrapper
+    resp = await self.api_endpoint(name, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 807, in api_endpoint
+    output = await func(*call_args, **call_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\HACKOHIRE\backend\service.py", line 113, in analyze_customer_risk
+    detailed_data = feature_store.get_customer_detailed(input_data.customer_id)
+  File "C:\Users\RRP\HACKOHIRE\backend\feature_store.py", line 104, in get_customer_detailed
+    f['f_monthly_emi'] = float(loan_record.get('monthly_emi', core['monthly_emi']))
+                                                              ~~~~^^^^^^^^^^^^^^^
+KeyError: 'monthly_emi'
+2026-02-17T02:22:55+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:59525 (scheme=http,method=POST,path=/analyze_customer_risk,type=application/json,length=44) (status=500,type=application/json,length=74) 114.350ms (trace=d83ef731f2d598db9611b9ebba6cfd75,span=a0e657bc1ecf50f6,sampled=0,service.name=None)
+2026-02-17T02:22:56+0530 [ERROR] [entry_service:bank_risk_service:1] Exception on /analyze_customer_risk [POST] (trace=1c0999f882a755d4fc8fd561d6b15f52,span=bb8cd33ffbf9a006,sampled=0,service.name=None)
+Traceback (most recent call last):
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 719, in api_endpoint_wrapper
+    resp = await self.api_endpoint(name, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 807, in api_endpoint
+    output = await func(*call_args, **call_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\HACKOHIRE\backend\service.py", line 113, in analyze_customer_risk
+    detailed_data = feature_store.get_customer_detailed(input_data.customer_id)
+  File "C:\Users\RRP\HACKOHIRE\backend\feature_store.py", line 104, in get_customer_detailed
+    f['f_monthly_emi'] = float(loan_record.get('monthly_emi', core['monthly_emi']))
+                                                              ~~~~^^^^^^^^^^^^^^^
+KeyError: 'monthly_emi'
+2026-02-17T02:22:56+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:59526 (scheme=http,method=POST,path=/analyze_customer_risk,type=application/json,length=44) (status=500,type=application/json,length=74) 100.915ms (trace=1c0999f882a755d4fc8fd561d6b15f52,span=bb8cd33ffbf9a006,sampled=0,service.name=None)
+2026-02-17T02:23:14+0530 [ERROR] [entry_service:bank_risk_service:1] Exception on /analyze_customer_risk [POST] (trace=43cba0926fa182c0e05c9fc6797cb3b6,span=f66850045e73c133,sampled=0,service.name=None)
+Traceback (most recent call last):
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 719, in api_endpoint_wrapper
+    resp = await self.api_endpoint(name, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 807, in api_endpoint
+    output = await func(*call_args, **call_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\HACKOHIRE\backend\service.py", line 113, in analyze_customer_risk
+    detailed_data = feature_store.get_customer_detailed(input_data.customer_id)
+  File "C:\Users\RRP\HACKOHIRE\backend\feature_store.py", line 104, in get_customer_detailed
+    f['f_monthly_emi'] = float(loan_record.get('monthly_emi', core['monthly_emi']))
+                                                              ~~~~^^^^^^^^^^^^^^^
+KeyError: 'monthly_emi'
+2026-02-17T02:23:14+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:49253 (scheme=http,method=POST,path=/analyze_customer_risk,type=application/json,length=44) (status=500,type=application/json,length=74) 117.623ms (trace=43cba0926fa182c0e05c9fc6797cb3b6,span=f66850045e73c133,sampled=0,service.name=None)
+2026-02-17T02:23:21+0530 [ERROR] [entry_service:bank_risk_service:1] Exception on /analyze_customer_risk [POST] (trace=f81fe90d932b0fe460f196135066dccd,span=41282dedc215cb4e,sampled=0,service.name=None)
+Traceback (most recent call last):
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 719, in api_endpoint_wrapper
+    resp = await self.api_endpoint(name, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 807, in api_endpoint
+    output = await func(*call_args, **call_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\HACKOHIRE\backend\service.py", line 113, in analyze_customer_risk
+    detailed_data = feature_store.get_customer_detailed(input_data.customer_id)
+  File "C:\Users\RRP\HACKOHIRE\backend\feature_store.py", line 104, in get_customer_detailed
+    f['f_monthly_emi'] = float(loan_record.get('monthly_emi', core['monthly_emi']))
+                                                              ~~~~^^^^^^^^^^^^^^^
+KeyError: 'monthly_emi'
+2026-02-17T02:23:21+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:63670 (scheme=http,method=POST,path=/analyze_customer_risk,type=application/json,length=44) (status=500,type=application/json,length=74) 116.362ms (trace=f81fe90d932b0fe460f196135066dccd,span=41282dedc215cb4e,sampled=0,service.name=None)
+2026-02-17T02:23:40+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:53567 (scheme=http,method=POST,path=/analyze_customer_risk,type=application/json,length=44) (status=200,type=application/json,length=31) 3.248ms (trace=c7c20f395531ebdcc8cf44578882a69b,span=4356db1f4ff68233,sampled=0,service.name=None)

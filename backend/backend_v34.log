@@ -1,0 +1,3 @@
+Feature Store: Loaded 10000 active loan records.
+Feature Store: Successfully loaded all 10000 customer sources.
+2026-02-17T02:46:57+0530 [INFO] [cli] Starting production HTTP BentoServer from "service:BankRiskService" listening on http://localhost:8000 (Press CTRL+C to quit)

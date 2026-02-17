@@ -65,11 +65,11 @@ export default function HomePage() {
           <div className="hero-stat-label">ML Architecture</div>
         </div>
         <div className="hero-stat">
-          <div className="hero-stat-value amber">{stats?.summary?.costSavings || '₹2.3 Cr'}</div>
+          <div className="hero-stat-value amber">{stats ? stats.summary.costSavings : <span style={{ fontSize: '18px', opacity: 0.7 }}>Loading...</span>}</div>
           <div className="hero-stat-label">Estimated Avoided Loss</div>
         </div>
         <div className="hero-stat">
-          <div className="hero-stat-value purple">{stats?.summary?.totalCustomers.toLocaleString() || '10,000'}</div>
+          <div className="hero-stat-value purple">{stats ? stats.summary.totalCustomers.toLocaleString() : <span style={{ fontSize: '18px', opacity: 0.7 }}>Loading...</span>}</div>
           <div className="hero-stat-label">Accounts Monitored</div>
         </div>
       </div>

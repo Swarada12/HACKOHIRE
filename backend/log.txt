@@ -1,0 +1,371 @@
+Feature Store: Successfully loaded all 10000 customer sources.
+2026-02-17T00:43:50+0530 [INFO] [cli] Starting production HTTP BentoServer from "service:BankRiskService" listening on http://localhost:8000 (Press CTRL+C to quit)
+Feature Store: Successfully loaded all 10000 customer sources.
+2026-02-17T00:43:53+0530 [INFO] [entry_service:bank_risk_service:1] Service bank_risk_service initialized
+2026-02-17T00:44:00+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:53797 (scheme=http,method=POST,path=/get_dashboard_stats,type=,length=0) (status=200,type=application/json,length=8586) 380.688ms (trace=9046b88913e2d1d43692fd90ca59b934,span=658e9f30f78b03d2,sampled=0,service.name=None)
+2026-02-17T00:44:13+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:55984 (scheme=http,method=POST,path=/get_dashboard_stats,type=,length=0) (status=200,type=application/json,length=8586) 120.835ms (trace=f287b314d0cc2caf70e566b7a9d8ae50,span=fe155986f43cf1aa,sampled=0,service.name=None)
+2026-02-17T00:44:16+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:60576 (scheme=http,method=POST,path=/get_dashboard_stats,type=,length=0) (status=200,type=application/json,length=8586) 250.006ms (trace=3bd96c3fdb8efb0c075e330d1dbdd009,span=550a668819a66563,sampled=0,service.name=None)
+2026-02-17T00:45:12+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:59579 (scheme=http,method=POST,path=/get_dashboard_stats,type=,length=0) (status=200,type=application/json,length=8586) 267.903ms (trace=e17fd8542df68255ecf1db70328417c3,span=7447f4b80b001baa,sampled=0,service.name=None)
+2026-02-17T00:45:22+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:56064 (scheme=http,method=POST,path=/get_dashboard_stats,type=application/json,length=2) (status=200,type=application/json,length=8586) 181.314ms (trace=9da947c6998eb93063ea26efcc4074d7,span=b4745c9cb0ae904b,sampled=0,service.name=None)
+2026-02-17T00:45:25+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:61272 (scheme=http,method=POST,path=/get_dashboard_stats,type=,length=0) (status=200,type=application/json,length=8586) 311.852ms (trace=1b6c5a51b29582c55ccf757c5149e456,span=628fca18e640b4aa,sampled=0,service.name=None)
+2026-02-17T00:45:27+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:55512 (scheme=http,method=POST,path=/get_dashboard_stats,type=,length=0) (status=200,type=application/json,length=8586) 268.629ms (trace=c936bb12c951ddf1c405cc79d1c180e4,span=3d65e4a0c9ced8fa,sampled=0,service.name=None)
+2026-02-17T00:45:40+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:60161 (scheme=http,method=POST,path=/get_dashboard_stats,type=,length=0) (status=200,type=application/json,length=8586) 272.626ms (trace=000c440adc45f9c7f26ddac57f639959,span=711aa92478d125ed,sampled=0,service.name=None)
+2026-02-17T00:45:53+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:52938 (scheme=http,method=POST,path=/get_dashboard_stats,type=,length=0) (status=200,type=application/json,length=8586) 321.352ms (trace=fd59b76ba79dab17913aaad1115395a9,span=5132cbea1e8216f4,sampled=0,service.name=None)
+2026-02-17T00:46:04+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:61835 (scheme=http,method=POST,path=/get_dashboard_stats,type=,length=0) (status=200,type=application/json,length=8586) 301.903ms (trace=cb6efeaaf453450413834ae3b7340be3,span=faa5d1845333ca8d,sampled=0,service.name=None)
+2026-02-17T00:46:04+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:61836 (scheme=http,method=POST,path=/get_dashboard_stats,type=,length=0) (status=200,type=application/json,length=8586) 342.681ms (trace=c935ad82da6717bd5b001e3fd3003d6b,span=66ce12eed094473e,sampled=0,service.name=None)
+2026-02-17T00:46:07+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:54886 (scheme=http,method=POST,path=/list_customers,type=,length=0) (status=200,type=application/json,length=46397) 57.044ms (trace=b04f1b28185cf7fa6dc447bb5ad5e1ec,span=b25791833d7708de,sampled=0,service.name=None)
+2026-02-17T00:46:07+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:54887 (scheme=http,method=POST,path=/list_customers,type=,length=0) (status=200,type=application/json,length=46397) 27.261ms (trace=4129d9e4a8c6b020317682ee7676857c,span=5bd330ffb79ec8ef,sampled=0,service.name=None)
+2026-02-17T00:46:11+0530 [ERROR] [entry_service:bank_risk_service:1] Exception on /analyze_customer_risk [POST] (trace=56d3197b2f3de58e08b41a350d739f9b,span=f758f004d85b4b06,sampled=0,service.name=None)
+Traceback (most recent call last):
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 719, in api_endpoint_wrapper
+    resp = await self.api_endpoint(name, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 785, in api_endpoint
+    input_data = await method.input_spec.from_http_request(request, serde)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_sdk\io_models.py", line 213, in from_http_request
+    return await serde.parse_request(request, t.cast(t.Type[IODescriptor], cls))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\serde.py", line 184, in parse_request
+    return self.deserialize_model(Payload((body,), metadata=request.headers), cls)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\serde.py", line 187, in deserialize_model
+    return cls.model_validate_json(b"".join(payload.data) or b"{}")
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\pydantic\main.py", line 746, in model_validate_json
+    return cls.__pydantic_validator__.validate_json(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        json_data, strict=strict, context=context, by_alias=by_alias, by_name=by_name
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+pydantic_core._pydantic_core.ValidationError: 1 validation error for Input
+input_data
+  Field required [type=missing, input_value={'customer_id': 'CUSR-100000'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.11/v/missing
+2026-02-17T00:46:11+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:50567 (scheme=http,method=POST,path=/analyze_customer_risk,type=application/json,length=29) (status=400,type=application/json,length=165) 9.857ms (trace=56d3197b2f3de58e08b41a350d739f9b,span=f758f004d85b4b06,sampled=0,service.name=None)
+2026-02-17T00:46:11+0530 [ERROR] [entry_service:bank_risk_service:1] Exception on /analyze_customer_risk [POST] (trace=0929677f3ab32f15d2780c5e0bc39076,span=73b9a8b9e3dee00a,sampled=0,service.name=None)
+Traceback (most recent call last):
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 719, in api_endpoint_wrapper
+    resp = await self.api_endpoint(name, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 785, in api_endpoint
+    input_data = await method.input_spec.from_http_request(request, serde)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_sdk\io_models.py", line 213, in from_http_request
+    return await serde.parse_request(request, t.cast(t.Type[IODescriptor], cls))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\serde.py", line 184, in parse_request
+    return self.deserialize_model(Payload((body,), metadata=request.headers), cls)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\serde.py", line 187, in deserialize_model
+    return cls.model_validate_json(b"".join(payload.data) or b"{}")
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\pydantic\main.py", line 746, in model_validate_json
+    return cls.__pydantic_validator__.validate_json(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        json_data, strict=strict, context=context, by_alias=by_alias, by_name=by_name
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+pydantic_core._pydantic_core.ValidationError: 1 validation error for Input
+input_data
+  Field required [type=missing, input_value={'customer_id': 'CUSR-100000'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.11/v/missing
+2026-02-17T00:46:11+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:50568 (scheme=http,method=POST,path=/analyze_customer_risk,type=application/json,length=29) (status=400,type=application/json,length=165) 3.759ms (trace=0929677f3ab32f15d2780c5e0bc39076,span=73b9a8b9e3dee00a,sampled=0,service.name=None)
+2026-02-17T00:46:15+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:63656 (scheme=http,method=POST,path=/get_dashboard_stats,type=,length=0) (status=200,type=application/json,length=8586) 297.530ms (trace=1227e4e5d793aa217dbd7ca0180b17ff,span=5a950e984eea1955,sampled=0,service.name=None)
+2026-02-17T00:46:15+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:63657 (scheme=http,method=POST,path=/get_dashboard_stats,type=,length=0) (status=200,type=application/json,length=8586) 244.604ms (trace=0bd0bf2d88381d56cdeb0c3834258a1f,span=54f5db1378138cfb,sampled=0,service.name=None)
+2026-02-17T00:46:17+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:54726 (scheme=http,method=POST,path=/get_dashboard_stats,type=,length=0) (status=200,type=application/json,length=8586) 270.614ms (trace=32320dff6543e7ba4c2219717b552873,span=53b001ca44a095d6,sampled=0,service.name=None)
+2026-02-17T00:46:17+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:54727 (scheme=http,method=POST,path=/get_dashboard_stats,type=,length=0) (status=200,type=application/json,length=8586) 290.252ms (trace=8dccb3c165940bddf5f2ea7d155f9e22,span=721e6e7f3cdbf3a4,sampled=0,service.name=None)
+2026-02-17T00:46:21+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:62797 (scheme=http,method=POST,path=/list_customers,type=,length=0) (status=200,type=application/json,length=46397) 23.736ms (trace=c1d7dca7b4c68b5b400ff6306149191d,span=89a0f0c9c9608b66,sampled=0,service.name=None)
+2026-02-17T00:46:21+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:62798 (scheme=http,method=POST,path=/list_customers,type=,length=0) (status=200,type=application/json,length=46397) 25.165ms (trace=d7291d88bb28e2f12ac9c6c9ba06fe47,span=52fef999ce3e67e4,sampled=0,service.name=None)
+2026-02-17T00:46:32+0530 [ERROR] [entry_service:bank_risk_service:1] Exception on /analyze_customer_risk [POST] (trace=a8e74f05a59cae04cd82d9cc9c716176,span=032f983d74d74f39,sampled=0,service.name=None)
+Traceback (most recent call last):
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 719, in api_endpoint_wrapper
+    resp = await self.api_endpoint(name, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 785, in api_endpoint
+    input_data = await method.input_spec.from_http_request(request, serde)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_sdk\io_models.py", line 213, in from_http_request
+    return await serde.parse_request(request, t.cast(t.Type[IODescriptor], cls))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\serde.py", line 184, in parse_request
+    return self.deserialize_model(Payload((body,), metadata=request.headers), cls)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\serde.py", line 187, in deserialize_model
+    return cls.model_validate_json(b"".join(payload.data) or b"{}")
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\pydantic\main.py", line 746, in model_validate_json
+    return cls.__pydantic_validator__.validate_json(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        json_data, strict=strict, context=context, by_alias=by_alias, by_name=by_name
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+pydantic_core._pydantic_core.ValidationError: 1 validation error for Input
+input_data
+  Field required [type=missing, input_value={'customer_id': 'CUSR-100007'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.11/v/missing
+2026-02-17T00:46:32+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:57502 (scheme=http,method=POST,path=/analyze_customer_risk,type=application/json,length=29) (status=400,type=application/json,length=165) 3.401ms (trace=a8e74f05a59cae04cd82d9cc9c716176,span=032f983d74d74f39,sampled=0,service.name=None)
+2026-02-17T00:46:32+0530 [ERROR] [entry_service:bank_risk_service:1] Exception on /analyze_customer_risk [POST] (trace=ae95b68c5159bc075726eaefc190f948,span=d4b4b52c04d78a9f,sampled=0,service.name=None)
+Traceback (most recent call last):
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 719, in api_endpoint_wrapper
+    resp = await self.api_endpoint(name, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 785, in api_endpoint
+    input_data = await method.input_spec.from_http_request(request, serde)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_sdk\io_models.py", line 213, in from_http_request
+    return await serde.parse_request(request, t.cast(t.Type[IODescriptor], cls))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\serde.py", line 184, in parse_request
+    return self.deserialize_model(Payload((body,), metadata=request.headers), cls)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\serde.py", line 187, in deserialize_model
+    return cls.model_validate_json(b"".join(payload.data) or b"{}")
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\pydantic\main.py", line 746, in model_validate_json
+    return cls.__pydantic_validator__.validate_json(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        json_data, strict=strict, context=context, by_alias=by_alias, by_name=by_name
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+pydantic_core._pydantic_core.ValidationError: 1 validation error for Input
+input_data
+  Field required [type=missing, input_value={'customer_id': 'CUSR-100007'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.11/v/missing
+2026-02-17T00:46:32+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:57503 (scheme=http,method=POST,path=/analyze_customer_risk,type=application/json,length=29) (status=400,type=application/json,length=165) 4.597ms (trace=ae95b68c5159bc075726eaefc190f948,span=d4b4b52c04d78a9f,sampled=0,service.name=None)
+2026-02-17T00:47:10+0530 [ERROR] [entry_service:bank_risk_service:1] Exception on /analyze_customer_risk [POST] (trace=8f6d81f234a870b3ca3c1e5004473419,span=87329f646826d2a6,sampled=0,service.name=None)
+Traceback (most recent call last):
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 719, in api_endpoint_wrapper
+    resp = await self.api_endpoint(name, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 785, in api_endpoint
+    input_data = await method.input_spec.from_http_request(request, serde)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_sdk\io_models.py", line 213, in from_http_request
+    return await serde.parse_request(request, t.cast(t.Type[IODescriptor], cls))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\serde.py", line 184, in parse_request
+    return self.deserialize_model(Payload((body,), metadata=request.headers), cls)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\serde.py", line 187, in deserialize_model
+    return cls.model_validate_json(b"".join(payload.data) or b"{}")
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\pydantic\main.py", line 746, in model_validate_json
+    return cls.__pydantic_validator__.validate_json(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        json_data, strict=strict, context=context, by_alias=by_alias, by_name=by_name
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+pydantic_core._pydantic_core.ValidationError: 1 validation error for Input
+input_data
+  Field required [type=missing, input_value={'customer_id': 'CUSR-100007'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.11/v/missing
+2026-02-17T00:47:10+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:57517 (scheme=http,method=POST,path=/analyze_customer_risk,type=application/json,length=30) (status=400,type=application/json,length=165) 4.054ms (trace=8f6d81f234a870b3ca3c1e5004473419,span=87329f646826d2a6,sampled=0,service.name=None)
+2026-02-17T00:47:30+0530 [ERROR] [entry_service:bank_risk_service:1] Exception on /analyze_customer_risk [POST] (trace=61fdbf7c1647a41cb54b8320be83e9d3,span=55238d0238c35ecc,sampled=0,service.name=None)
+Traceback (most recent call last):
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 719, in api_endpoint_wrapper
+    resp = await self.api_endpoint(name, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 785, in api_endpoint
+    input_data = await method.input_spec.from_http_request(request, serde)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_sdk\io_models.py", line 213, in from_http_request
+    return await serde.parse_request(request, t.cast(t.Type[IODescriptor], cls))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\serde.py", line 184, in parse_request
+    return self.deserialize_model(Payload((body,), metadata=request.headers), cls)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\serde.py", line 187, in deserialize_model
+    return cls.model_validate_json(b"".join(payload.data) or b"{}")
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\pydantic\main.py", line 746, in model_validate_json
+    return cls.__pydantic_validator__.validate_json(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        json_data, strict=strict, context=context, by_alias=by_alias, by_name=by_name
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+pydantic_core._pydantic_core.ValidationError: 1 validation error for Input
+input_data
+  Field required [type=missing, input_value={'customer_id': 'CUSR-100007'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.11/v/missing
+2026-02-17T00:47:30+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:49384 (scheme=http,method=POST,path=/analyze_customer_risk,type=application/json,length=29) (status=400,type=application/json,length=165) 3.050ms (trace=61fdbf7c1647a41cb54b8320be83e9d3,span=55238d0238c35ecc,sampled=0,service.name=None)
+2026-02-17T00:47:30+0530 [ERROR] [entry_service:bank_risk_service:1] Exception on /analyze_customer_risk [POST] (trace=ac1cbc2d06daf8f36796136a5e84c204,span=f1ebd28cce791f55,sampled=0,service.name=None)
+Traceback (most recent call last):
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 719, in api_endpoint_wrapper
+    resp = await self.api_endpoint(name, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 785, in api_endpoint
+    input_data = await method.input_spec.from_http_request(request, serde)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_sdk\io_models.py", line 213, in from_http_request
+    return await serde.parse_request(request, t.cast(t.Type[IODescriptor], cls))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\serde.py", line 184, in parse_request
+    return self.deserialize_model(Payload((body,), metadata=request.headers), cls)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\serde.py", line 187, in deserialize_model
+    return cls.model_validate_json(b"".join(payload.data) or b"{}")
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\pydantic\main.py", line 746, in model_validate_json
+    return cls.__pydantic_validator__.validate_json(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        json_data, strict=strict, context=context, by_alias=by_alias, by_name=by_name
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+pydantic_core._pydantic_core.ValidationError: 1 validation error for Input
+input_data
+  Field required [type=missing, input_value={'customer_id': 'CUSR-100007'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.11/v/missing
+2026-02-17T00:47:30+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:65429 (scheme=http,method=POST,path=/analyze_customer_risk,type=application/json,length=29) (status=400,type=application/json,length=165) 2.804ms (trace=ac1cbc2d06daf8f36796136a5e84c204,span=f1ebd28cce791f55,sampled=0,service.name=None)
+2026-02-17T00:47:31+0530 [ERROR] [entry_service:bank_risk_service:1] Exception on /analyze_customer_risk [POST] (trace=ba22bb4924b09257de51020845a1af94,span=73a32df340cecf6e,sampled=0,service.name=None)
+Traceback (most recent call last):
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 719, in api_endpoint_wrapper
+    resp = await self.api_endpoint(name, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 785, in api_endpoint
+    input_data = await method.input_spec.from_http_request(request, serde)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_sdk\io_models.py", line 213, in from_http_request
+    return await serde.parse_request(request, t.cast(t.Type[IODescriptor], cls))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\serde.py", line 184, in parse_request
+    return self.deserialize_model(Payload((body,), metadata=request.headers), cls)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\serde.py", line 187, in deserialize_model
+    return cls.model_validate_json(b"".join(payload.data) or b"{}")
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\pydantic\main.py", line 746, in model_validate_json
+    return cls.__pydantic_validator__.validate_json(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        json_data, strict=strict, context=context, by_alias=by_alias, by_name=by_name
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+pydantic_core._pydantic_core.ValidationError: 1 validation error for Input
+input_data
+  Field required [type=missing, input_value={'customer_id': 'CUSR-100007'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.11/v/missing
+2026-02-17T00:47:31+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:65021 (scheme=http,method=POST,path=/analyze_customer_risk,type=application/json,length=29) (status=400,type=application/json,length=165) 2.629ms (trace=ba22bb4924b09257de51020845a1af94,span=73a32df340cecf6e,sampled=0,service.name=None)
+2026-02-17T00:47:31+0530 [ERROR] [entry_service:bank_risk_service:1] Exception on /analyze_customer_risk [POST] (trace=8600f94b5b9d5a81685adffe6f20885b,span=e1481fdd0db15a2c,sampled=0,service.name=None)
+Traceback (most recent call last):
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 719, in api_endpoint_wrapper
+    resp = await self.api_endpoint(name, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 785, in api_endpoint
+    input_data = await method.input_spec.from_http_request(request, serde)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_sdk\io_models.py", line 213, in from_http_request
+    return await serde.parse_request(request, t.cast(t.Type[IODescriptor], cls))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\serde.py", line 184, in parse_request
+    return self.deserialize_model(Payload((body,), metadata=request.headers), cls)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\serde.py", line 187, in deserialize_model
+    return cls.model_validate_json(b"".join(payload.data) or b"{}")
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\pydantic\main.py", line 746, in model_validate_json
+    return cls.__pydantic_validator__.validate_json(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        json_data, strict=strict, context=context, by_alias=by_alias, by_name=by_name
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+pydantic_core._pydantic_core.ValidationError: 1 validation error for Input
+input_data
+  Field required [type=missing, input_value={'customer_id': 'CUSR-100007'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.11/v/missing
+2026-02-17T00:47:31+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:54690 (scheme=http,method=POST,path=/analyze_customer_risk,type=application/json,length=29) (status=400,type=application/json,length=165) 2.854ms (trace=8600f94b5b9d5a81685adffe6f20885b,span=e1481fdd0db15a2c,sampled=0,service.name=None)
+2026-02-17T00:47:32+0530 [ERROR] [entry_service:bank_risk_service:1] Exception on /analyze_customer_risk [POST] (trace=512920a82e56add4690f2b03f7674c5e,span=a59a7c94a89a6a2e,sampled=0,service.name=None)
+Traceback (most recent call last):
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 719, in api_endpoint_wrapper
+    resp = await self.api_endpoint(name, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 785, in api_endpoint
+    input_data = await method.input_spec.from_http_request(request, serde)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_sdk\io_models.py", line 213, in from_http_request
+    return await serde.parse_request(request, t.cast(t.Type[IODescriptor], cls))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\serde.py", line 184, in parse_request
+    return self.deserialize_model(Payload((body,), metadata=request.headers), cls)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\serde.py", line 187, in deserialize_model
+    return cls.model_validate_json(b"".join(payload.data) or b"{}")
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\pydantic\main.py", line 746, in model_validate_json
+    return cls.__pydantic_validator__.validate_json(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        json_data, strict=strict, context=context, by_alias=by_alias, by_name=by_name
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+pydantic_core._pydantic_core.ValidationError: 1 validation error for Input
+input_data
+  Field required [type=missing, input_value={'customer_id': 'CUSR-100007'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.11/v/missing
+2026-02-17T00:47:32+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:61779 (scheme=http,method=POST,path=/analyze_customer_risk,type=application/json,length=29) (status=400,type=application/json,length=165) 2.755ms (trace=512920a82e56add4690f2b03f7674c5e,span=a59a7c94a89a6a2e,sampled=0,service.name=None)
+2026-02-17T00:47:45+0530 [ERROR] [entry_service:bank_risk_service:1] Exception on /analyze_customer_risk [POST] (trace=91f9a18d4744ea252f60187d25b33bcd,span=6b331e154f39195f,sampled=0,service.name=None)
+Traceback (most recent call last):
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 719, in api_endpoint_wrapper
+    resp = await self.api_endpoint(name, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 785, in api_endpoint
+    input_data = await method.input_spec.from_http_request(request, serde)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_sdk\io_models.py", line 213, in from_http_request
+    return await serde.parse_request(request, t.cast(t.Type[IODescriptor], cls))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\serde.py", line 184, in parse_request
+    return self.deserialize_model(Payload((body,), metadata=request.headers), cls)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\serde.py", line 187, in deserialize_model
+    return cls.model_validate_json(b"".join(payload.data) or b"{}")
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\pydantic\main.py", line 746, in model_validate_json
+    return cls.__pydantic_validator__.validate_json(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        json_data, strict=strict, context=context, by_alias=by_alias, by_name=by_name
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+pydantic_core._pydantic_core.ValidationError: 1 validation error for Input
+input_data
+  Field required [type=missing, input_value={'customer_id': 'CUSR-100007'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.11/v/missing
+2026-02-17T00:47:45+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:61787 (scheme=http,method=POST,path=/analyze_customer_risk,type=application/json,length=30) (status=400,type=application/json,length=165) 1.520ms (trace=91f9a18d4744ea252f60187d25b33bcd,span=6b331e154f39195f,sampled=0,service.name=None)
+2026-02-17T00:48:21+0530 [ERROR] [entry_service:bank_risk_service:1] Exception on /analyze_customer_risk [POST] (trace=8ede5560e469f9ca65cef10003c3d7b7,span=3d73c8437930bbd5,sampled=0,service.name=None)
+Traceback (most recent call last):
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 719, in api_endpoint_wrapper
+    resp = await self.api_endpoint(name, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 785, in api_endpoint
+    input_data = await method.input_spec.from_http_request(request, serde)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_sdk\io_models.py", line 213, in from_http_request
+    return await serde.parse_request(request, t.cast(t.Type[IODescriptor], cls))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\serde.py", line 184, in parse_request
+    return self.deserialize_model(Payload((body,), metadata=request.headers), cls)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\serde.py", line 187, in deserialize_model
+    return cls.model_validate_json(b"".join(payload.data) or b"{}")
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\pydantic\main.py", line 746, in model_validate_json
+    return cls.__pydantic_validator__.validate_json(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        json_data, strict=strict, context=context, by_alias=by_alias, by_name=by_name
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+pydantic_core._pydantic_core.ValidationError: 1 validation error for Input
+input_data
+  Field required [type=missing, input_value={'customer_id': 'CUSR-100007'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.11/v/missing
+2026-02-17T00:48:21+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:64462 (scheme=http,method=POST,path=/analyze_customer_risk,type=application/json,length=30) (status=400,type=application/json,length=165) 2.888ms (trace=8ede5560e469f9ca65cef10003c3d7b7,span=3d73c8437930bbd5,sampled=0,service.name=None)

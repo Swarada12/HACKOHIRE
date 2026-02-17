@@ -1,0 +1,325 @@
+Feature Store: Successfully loaded all 10000 customer sources.
+2026-02-17T01:48:34+0530 [INFO] [cli] Starting production HTTP BentoServer from "service:BankRiskService" listening on http://localhost:8000 (Press CTRL+C to quit)
+Feature Store: Successfully loaded all 10000 customer sources.
+2026-02-17T01:48:37+0530 [INFO] [entry_service:bank_risk_service:1] Service bank_risk_service initialized
+2026-02-17T01:48:39+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:65071 (scheme=http,method=POST,path=/list_customers,type=application/json,length=36) (status=200,type=application/json,length=463572) 1723.059ms (trace=9f04ac874d05b951195481367f19d5ff,span=0599956fcc95cae0,sampled=0,service.name=None)
+--- Logging error ---
+Traceback (most recent call last):
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 719, in api_endpoint_wrapper
+    resp = await self.api_endpoint(name, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 807, in api_endpoint
+    output = await func(*call_args, **call_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\HACKOHIRE\backend\service.py", line 124, in analyze_customer_risk
+    intervention = intervention_engine.generate_intervention(input_data.customer_id, features, ml_result, context)
+  File "C:\Users\RRP\HACKOHIRE\backend\intervention_engine.py", line 40, in generate_intervention
+    "OFF-OD-LIMIT": f"Hi {name}, to prevent check bounces, we've pre-approved a temporary \u20b9{limit_inc} overdraft. This covers your upcoming EMI of \u20b9{int(monthly_emi)}.",
+                                                                                            ^^^^^^^^^
+UnboundLocalError: cannot access local variable 'limit_inc' where it is not associated with a value
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\logging\__init__.py", line 1154, in emit
+    stream.write(msg + self.terminator)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\u20b9' in position 1119: character maps to <undefined>
+Call stack:
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\worker\service.py", line 246, in <module>
+    main()  # pylint: disable=no-value-for-parameter
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\click\core.py", line 1442, in __call__
+    return self.main(*args, **kwargs)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\click\core.py", line 1363, in main
+    rv = self.invoke(ctx)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\click\core.py", line 1226, in invoke
+    return ctx.invoke(self.callback, **ctx.params)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\click\core.py", line 794, in invoke
+    return callback(*args, **kwargs)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\worker\service.py", line 242, in main
+    uvicorn.Server(config).run(sockets=[socket])
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\uvicorn\server.py", line 67, in run
+    return asyncio_run(self.serve(sockets=sockets), loop_factory=self.config.get_loop_factory())
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\asyncio\runners.py", line 195, in run
+    return runner.run(main)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\asyncio\base_events.py", line 712, in run_until_complete
+    self.run_forever()
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\asyncio\base_events.py", line 683, in run_forever
+    self._run_once()
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\asyncio\base_events.py", line 2042, in _run_once
+    handle._run()
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 71, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\routing.py", line 78, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\routing.py", line 75, in app
+    response = await f(request)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 742, in api_endpoint_wrapper
+    log_exception(request)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\bentoml\_internal\server\http_app.py", line 84, in log_exception
+    logger.error(
+Message: 'Exception on %s [%s]'
+Arguments: ('/analyze_customer_risk', 'POST')
+2026-02-17T01:48:41+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:51791 (scheme=http,method=POST,path=/analyze_customer_risk,type=application/json,length=44) (status=500,type=application/json,length=74) 179.025ms (trace=f7d43cf444bb00784ab3c2865e5aa3dd,span=8810118501139826,sampled=0,service.name=None)
+--- Logging error ---
+Traceback (most recent call last):
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 719, in api_endpoint_wrapper
+    resp = await self.api_endpoint(name, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 807, in api_endpoint
+    output = await func(*call_args, **call_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\HACKOHIRE\backend\service.py", line 124, in analyze_customer_risk
+    intervention = intervention_engine.generate_intervention(input_data.customer_id, features, ml_result, context)
+  File "C:\Users\RRP\HACKOHIRE\backend\intervention_engine.py", line 40, in generate_intervention
+    "OFF-OD-LIMIT": f"Hi {name}, to prevent check bounces, we've pre-approved a temporary \u20b9{limit_inc} overdraft. This covers your upcoming EMI of \u20b9{int(monthly_emi)}.",
+                                                                                            ^^^^^^^^^
+UnboundLocalError: cannot access local variable 'limit_inc' where it is not associated with a value
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\logging\__init__.py", line 1154, in emit
+    stream.write(msg + self.terminator)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\u20b9' in position 1119: character maps to <undefined>
+Call stack:
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\worker\service.py", line 246, in <module>
+    main()  # pylint: disable=no-value-for-parameter
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\click\core.py", line 1442, in __call__
+    return self.main(*args, **kwargs)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\click\core.py", line 1363, in main
+    rv = self.invoke(ctx)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\click\core.py", line 1226, in invoke
+    return ctx.invoke(self.callback, **ctx.params)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\click\core.py", line 794, in invoke
+    return callback(*args, **kwargs)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\worker\service.py", line 242, in main
+    uvicorn.Server(config).run(sockets=[socket])
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\uvicorn\server.py", line 67, in run
+    return asyncio_run(self.serve(sockets=sockets), loop_factory=self.config.get_loop_factory())
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\asyncio\runners.py", line 195, in run
+    return runner.run(main)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\asyncio\base_events.py", line 712, in run_until_complete
+    self.run_forever()
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\asyncio\base_events.py", line 683, in run_forever
+    self._run_once()
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\asyncio\base_events.py", line 2042, in _run_once
+    handle._run()
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 71, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\routing.py", line 78, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\routing.py", line 75, in app
+    response = await f(request)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 742, in api_endpoint_wrapper
+    log_exception(request)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\bentoml\_internal\server\http_app.py", line 84, in log_exception
+    logger.error(
+Message: 'Exception on %s [%s]'
+Arguments: ('/analyze_customer_risk', 'POST')
+2026-02-17T01:48:41+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:51792 (scheme=http,method=POST,path=/analyze_customer_risk,type=application/json,length=44) (status=500,type=application/json,length=74) 119.890ms (trace=6bc282ffb3d2766b3dba7589031f2a55,span=574d0ade4c7c7f9a,sampled=0,service.name=None)
+2026-02-17T01:48:49+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:65289 (scheme=http,method=POST,path=/list_customers,type=application/json,length=36) (status=200,type=application/json,length=463572) 2106.936ms (trace=b20318823655f0a207ae505194998faa,span=45be1477030e7871,sampled=0,service.name=None)
+2026-02-17T01:48:51+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:65290 (scheme=http,method=POST,path=/list_customers,type=application/json,length=36) (status=200,type=application/json,length=463572) 1983.061ms (trace=1ca7fff0544b4904a7ee5454bf4d0813,span=a30b08c52774e921,sampled=0,service.name=None)
+--- Logging error ---
+Traceback (most recent call last):
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 719, in api_endpoint_wrapper
+    resp = await self.api_endpoint(name, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 807, in api_endpoint
+    output = await func(*call_args, **call_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\HACKOHIRE\backend\service.py", line 124, in analyze_customer_risk
+    intervention = intervention_engine.generate_intervention(input_data.customer_id, features, ml_result, context)
+  File "C:\Users\RRP\HACKOHIRE\backend\intervention_engine.py", line 40, in generate_intervention
+    "OFF-OD-LIMIT": f"Hi {name}, to prevent check bounces, we've pre-approved a temporary \u20b9{limit_inc} overdraft. This covers your upcoming EMI of \u20b9{int(monthly_emi)}.",
+                                                                                            ^^^^^^^^^
+UnboundLocalError: cannot access local variable 'limit_inc' where it is not associated with a value
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\logging\__init__.py", line 1154, in emit
+    stream.write(msg + self.terminator)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\u20b9' in position 1119: character maps to <undefined>
+Call stack:
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\worker\service.py", line 246, in <module>
+    main()  # pylint: disable=no-value-for-parameter
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\click\core.py", line 1442, in __call__
+    return self.main(*args, **kwargs)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\click\core.py", line 1363, in main
+    rv = self.invoke(ctx)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\click\core.py", line 1226, in invoke
+    return ctx.invoke(self.callback, **ctx.params)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\click\core.py", line 794, in invoke
+    return callback(*args, **kwargs)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\worker\service.py", line 242, in main
+    uvicorn.Server(config).run(sockets=[socket])
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\uvicorn\server.py", line 67, in run
+    return asyncio_run(self.serve(sockets=sockets), loop_factory=self.config.get_loop_factory())
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\asyncio\runners.py", line 195, in run
+    return runner.run(main)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\asyncio\base_events.py", line 712, in run_until_complete
+    self.run_forever()
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\asyncio\base_events.py", line 683, in run_forever
+    self._run_once()
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\asyncio\base_events.py", line 2042, in _run_once
+    handle._run()
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 71, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\routing.py", line 78, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\routing.py", line 75, in app
+    response = await f(request)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 742, in api_endpoint_wrapper
+    log_exception(request)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\bentoml\_internal\server\http_app.py", line 84, in log_exception
+    logger.error(
+Message: 'Exception on %s [%s]'
+Arguments: ('/analyze_customer_risk', 'POST')
+2026-02-17T01:48:52+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:56664 (scheme=http,method=POST,path=/analyze_customer_risk,type=application/json,length=44) (status=500,type=application/json,length=74) 181.210ms (trace=5fd3841037d83a95b0734f0ec451bb75,span=0c4898b75db21364,sampled=0,service.name=None)
+--- Logging error ---
+Traceback (most recent call last):
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 719, in api_endpoint_wrapper
+    resp = await self.api_endpoint(name, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 807, in api_endpoint
+    output = await func(*call_args, **call_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\HACKOHIRE\backend\service.py", line 124, in analyze_customer_risk
+    intervention = intervention_engine.generate_intervention(input_data.customer_id, features, ml_result, context)
+  File "C:\Users\RRP\HACKOHIRE\backend\intervention_engine.py", line 40, in generate_intervention
+    "OFF-OD-LIMIT": f"Hi {name}, to prevent check bounces, we've pre-approved a temporary \u20b9{limit_inc} overdraft. This covers your upcoming EMI of \u20b9{int(monthly_emi)}.",
+                                                                                            ^^^^^^^^^
+UnboundLocalError: cannot access local variable 'limit_inc' where it is not associated with a value
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\logging\__init__.py", line 1154, in emit
+    stream.write(msg + self.terminator)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\u20b9' in position 1119: character maps to <undefined>
+Call stack:
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\worker\service.py", line 246, in <module>
+    main()  # pylint: disable=no-value-for-parameter
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\click\core.py", line 1442, in __call__
+    return self.main(*args, **kwargs)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\click\core.py", line 1363, in main
+    rv = self.invoke(ctx)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\click\core.py", line 1226, in invoke
+    return ctx.invoke(self.callback, **ctx.params)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\click\core.py", line 794, in invoke
+    return callback(*args, **kwargs)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\worker\service.py", line 242, in main
+    uvicorn.Server(config).run(sockets=[socket])
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\uvicorn\server.py", line 67, in run
+    return asyncio_run(self.serve(sockets=sockets), loop_factory=self.config.get_loop_factory())
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\asyncio\runners.py", line 195, in run
+    return runner.run(main)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\asyncio\base_events.py", line 712, in run_until_complete
+    self.run_forever()
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\asyncio\base_events.py", line 683, in run_forever
+    self._run_once()
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\asyncio\base_events.py", line 2042, in _run_once
+    handle._run()
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 71, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\routing.py", line 78, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\starlette\routing.py", line 75, in app
+    response = await f(request)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\_bentoml_impl\server\app.py", line 742, in api_endpoint_wrapper
+    log_exception(request)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\bentoml\_internal\server\http_app.py", line 84, in log_exception
+    logger.error(
+Message: 'Exception on %s [%s]'
+Arguments: ('/analyze_customer_risk', 'POST')
+2026-02-17T01:48:52+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:56665 (scheme=http,method=POST,path=/analyze_customer_risk,type=application/json,length=44) (status=500,type=application/json,length=74) 162.967ms (trace=b5bbbf6f6692f83590ac6d112bd9ff45,span=dd09cbe9386928e7,sampled=0,service.name=None)
+2026-02-17T01:49:11+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:59876 (scheme=http,method=POST,path=/list_customers,type=application/json,length=36) (status=200,type=application/json,length=463572) 2607.377ms (trace=1b8fc504cfcb7176ea3b2ea706c2d439,span=33dd76c669378562,sampled=0,service.name=None)
+2026-02-17T01:49:12+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:59877 (scheme=http,method=POST,path=/list_customers,type=application/json,length=36) (status=200,type=application/json,length=463572) 1046.550ms (trace=9f1d6ff5f8847bbab766c655322273ce,span=164d6c93485f9631,sampled=0,service.name=None)

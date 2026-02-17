@@ -1,37 +1,77 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { getDashboardStats } from '../lib/api';
+import { getCustomers, getDashboardStats } from '../lib/api';
 import Link from 'next/link';
+import Loader from '../components/Loader';
 
 export default function AlertsPage() {
+    const [alerts, setAlerts] = useState([]);
     const [stats, setStats] = useState(null);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState('All');
     const [statusFilter, setStatusFilter] = useState('All');
 
     useEffect(() => {
-        async function fetchStats() {
+        async function fetchData() {
             setLoading(true);
-            const data = await getDashboardStats();
-            if (data) {
-                setStats(data);
-            }
+
+            // 1. Get Dashboard Stats for summary numbers
+            const dashboardData = await getDashboardStats();
+            setStats(dashboardData);
+
+            // 2. Get Real Critical Customers to populate the Alerts List
+            // We fetch Critical (and maybe High) to show as "Active Alerts"
+            const criticalCustomers = await getCustomers('Critical');
+            const highCustomers = await getCustomers('High');
+
+            const rawAlerts = [
+                ...(criticalCustomers.customers || []).map(c => ({
+                    id: `ALT-${c.customer_id}`,
+                    type: 'Risk Escalation',
+                    severity: 'Critical',
+                    status: 'active',
+                    message: `Customer risk score escalated to ${c.risk_score} (Critical). Immediate intervention required.`,
+                    timestamp: new Date().toISOString(),
+                    customerId: c.customer_id,
+                    customerName: c.name,
+                    suggestedAction: c.suggested_action || 'Initiate Debt Restructuring / Call Customer'
+                })),
+                ...(highCustomers.customers || []).map(c => ({
+                    id: `ALT-${c.customer_id}`,
+                    type: 'Early Warning',
+                    severity: 'High',
+                    status: 'pending',
+                    message: `Risk score increased to ${c.risk_score}. Monitor closely.`,
+                    timestamp: new Date(Date.now() - 86400000).toISOString(),
+                    customerId: c.customer_id,
+                    customerName: c.name,
+                    suggestedAction: c.suggested_action || 'Send Warning Notification / Temporary Limit Freeze'
+                }))
+            ];
+
+            setAlerts(rawAlerts);
             setLoading(false);
         }
-        fetchStats();
+        fetchData();
     }, []);
 
     if (loading) {
-        return <div className="page-container"><div style={{ padding: '50px', textAlign: 'center' }}>Loading Live Alerts...</div></div>;
+        return <Loader type="alerts" text="Syncing Enterprise Alert System..." />;
     }
 
-    if (!stats) return <div className="page-container">Error loading real-time data. Check backend service.</div>;
+    // fallback if stats failed
+    const summary = stats?.summary || { interventionsTriggered: 0 };
 
-    const { alerts, summary } = stats;
+    // Calculate local stats from the fetched alerts
+    const totalAlerts = alerts.length;
+    const activeAlerts = alerts.filter(a => a.severity === 'Critical').length;
+    const pendingAlerts = alerts.filter(a => a.severity === 'High').length;
 
     const filtered = alerts.filter(a => {
         const matchSeverity = filter === 'All' || a.severity === filter;
+        // Map 'active' to Critical for simplicity in this view if needed, or just use status string
+        // Actually, let's just filter by the status field we assigned
         const matchStatus = statusFilter === 'All' || a.status === statusFilter;
         return matchSeverity && matchStatus;
     });
@@ -55,11 +95,11 @@ export default function AlertsPage() {
             {/* Alert Stats */}
             <div className="metrics-grid animate-stagger">
                 {[
-                    { label: 'Total Alerts', value: alerts.length, color: 'blue', icon: '🔔' },
-                    { label: 'Active', value: alerts.filter(a => a.status === 'active').length, color: 'red', icon: '🚨' },
-                    { label: 'Pending', value: alerts.filter(a => a.status === 'pending').length, color: 'amber', icon: '⏳' },
+                    { label: 'Total Alerts', value: totalAlerts.toLocaleString(), color: 'blue', icon: '🔔' },
+                    { label: 'Active (Critical)', value: activeAlerts.toLocaleString(), color: 'red', icon: '🚨' },
+                    { label: 'Pending (High)', value: pendingAlerts.toLocaleString(), color: 'amber', icon: '⏳' },
                     { label: 'Resolved', value: 0, color: 'green', icon: '✅' },
-                    { label: 'Auto-Triggered', value: summary.interventionsTriggered, color: 'purple', icon: '🤖' },
+                    { label: 'Auto-Triggered', value: (activeAlerts + pendingAlerts).toLocaleString(), color: 'purple', icon: '🤖' },
                 ].map((s, i) => (
                     <div key={i} className={`metric-card ${s.color}`}>
                         <div className={`metric-icon ${s.color}`}><span style={{ fontSize: '20px' }}>{s.icon}</span></div>
@@ -91,9 +131,9 @@ export default function AlertsPage() {
             {/* Alert List */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }} className="animate-stagger">
                 {filtered.map((alert) => (
-                    <div key={alert.id} className={`alert-card ${alert.severity.toLowerCase()}`}>
+                    <div key={alert.id} className={`alert-card ${alert.severity.toLowerCase()} ${alert.status === 'resolved' ? 'resolved' : ''}`}>
                         <div className={`alert-severity-icon ${alert.severity.toLowerCase()}`}>
-                            {severityIcon(alert.severity)}
+                            {alert.status === 'resolved' ? '✅' : severityIcon(alert.severity)}
                         </div>
                         <div className="alert-content">
                             <div className="alert-title">
@@ -112,20 +152,58 @@ export default function AlertsPage() {
                                 </span>
                                 <span>🕐 {new Date(alert.timestamp).toLocaleString()}</span>
                             </div>
-                            <div style={{
-                                marginTop: '10px', padding: '10px 14px',
-                                background: 'var(--bg-tertiary)', borderRadius: 'var(--radius-sm)',
-                                fontSize: '13px', color: 'var(--text-secondary)',
-                                border: '1px solid var(--border-light)',
-                                display: 'flex', alignItems: 'center', gap: '8px'
-                            }}>
-                                <span style={{ fontWeight: '700', color: 'var(--brand-primary)', fontSize: '12px' }}>💡 SUGGESTED:</span>
-                                {alert.suggestedAction}
-                            </div>
+
+                            {alert.status === 'resolved' ? (
+                                <div style={{ marginTop: '10px', padding: '10px', background: '#ecfdf5', borderRadius: '4px', border: '1px solid #10b981', color: '#065f46', fontSize: '13px' }}>
+                                    <strong>Successfully Intervened:</strong> {alert.suggestedAction} has been executed.
+                                </div>
+                            ) : (
+                                <div style={{
+                                    marginTop: '10px', padding: '10px 14px',
+                                    background: 'var(--bg-tertiary)', borderRadius: 'var(--radius-sm)',
+                                    fontSize: '13px', color: 'var(--text-secondary)',
+                                    border: '1px solid var(--border-light)',
+                                    display: 'flex', alignItems: 'center', gap: '8px'
+                                }}>
+                                    <span style={{ fontWeight: '700', color: 'var(--brand-primary)', fontSize: '12px' }}>💡 SUGGESTED:</span>
+                                    {alert.suggestedAction}
+                                </div>
+                            )}
                         </div>
                         <div className="alert-actions">
-                            <button className="btn btn-primary btn-sm">Take Action</button>
-                            <button className="btn btn-secondary btn-sm">Dismiss</button>
+                            {alert.status !== 'resolved' && (
+                                <>
+                                    <button
+                                        className="btn btn-primary btn-sm"
+                                        onClick={() => {
+                                            const updated = alerts.map(a => a.id === alert.id ? { ...a, status: 'resolved' } : a);
+                                            setAlerts(updated);
+                                        }}
+                                    >
+                                        Take Action
+                                    </button>
+                                    <button
+                                        className="btn btn-secondary btn-sm"
+                                        onClick={() => {
+                                            const updated = alerts.filter(a => a.id !== alert.id);
+                                            setAlerts(updated);
+                                        }}
+                                    >
+                                        Dismiss
+                                    </button>
+                                </>
+                            )}
+                            {alert.status === 'resolved' && (
+                                <button
+                                    className="btn btn-secondary btn-sm"
+                                    onClick={() => {
+                                        const updated = alerts.map(a => a.id === alert.id ? { ...a, status: a.severity === 'Critical' ? 'active' : 'pending' } : a);
+                                        setAlerts(updated);
+                                    }}
+                                >
+                                    Undo
+                                </button>
+                            )}
                         </div>
                     </div>
                 ))}

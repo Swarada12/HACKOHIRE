@@ -1,0 +1,54 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\bentoml\__main__.py", line 4, in <module>
+    cli()
+    ~~~^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\click\core.py", line 1442, in __call__
+    return self.main(*args, **kwargs)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\click\core.py", line 1363, in main
+    rv = self.invoke(ctx)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\click\core.py", line 1830, in invoke
+    return _process_result(sub_ctx.command.invoke(sub_ctx))
+                           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\click\core.py", line 1226, in invoke
+    return ctx.invoke(self.callback, **ctx.params)
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\click\core.py", line 794, in invoke
+    return callback(*args, **kwargs)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\bentoml_cli\utils.py", line 364, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\bentoml_cli\utils.py", line 335, in wrapper
+    return_value = func(*args, **kwargs)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\bentoml_cli\env_manager.py", line 124, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\bentoml_cli\serve.py", line 263, in serve
+    svc = load(bento_identifier=bento, working_dir=working_dir)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\bentoml\_internal\service\loader.py", line 415, in load
+    svc = import_service(
+        bento_identifier,
+    ...<2 lines>...
+        standalone_load=standalone_load,
+    )
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\simple_di\__init__.py", line 139, in _
+    return func(*_inject_args(bind.args), **_inject_kwargs(bind.kwargs))
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\bentoml\_internal\service\loader.py", line 97, in import_service
+    svc = _do_import(svc_import_path, working_dir, reload)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\site-packages\bentoml\_internal\service\loader.py", line 162, in _do_import
+    module = importlib.import_module(module_name, package=working_dir)
+  File "C:\Users\RRP\AppData\Local\Programs\Python\Python313\Lib\importlib\__init__.py", line 88, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 1026, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "C:\Users\RRP\HACKOHIRE\backend\service.py", line 4, in <module>
+    from ml_engine import MLRiskEngine, RareCaseSolver
+  File "C:\Users\RRP\HACKOHIRE\backend\ml_engine.py", line 158
+    is_rare = False        is_rare = False
+                           ^^^^^^^
+SyntaxError: invalid syntax

@@ -2,7 +2,7 @@ import './globals.css';
 import Sidebar from './components/Sidebar';
 
 export const metadata = {
-  title: 'Barclays EWS — Early Warning System',
+  title: 'Praeventix EWS — Early Warning System',
   description: 'Proactive delinquency prediction platform powered by ML — detect financial stress signals early and enable empathetic interventions before missed payments.',
 };
 

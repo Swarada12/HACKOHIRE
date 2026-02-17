@@ -8,6 +8,8 @@ import {
 import { getDashboardStats } from '../lib/api';
 import Link from 'next/link';
 
+import Loader from '../components/Loader';
+
 export default function DashboardPage() {
     const [stats, setStats] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -22,24 +24,34 @@ export default function DashboardPage() {
         fetchStats();
     }, []);
 
-    if (loading) return <div className="page-container"><div style={{ padding: '100px', textAlign: 'center' }}>📊 Loading Enterprise Dashboard...</div></div>;
-    if (!stats) return <div className="page-container">Error: Backend offline or data lake hydrated.</div>;
+    if (loading) return <Loader type="dashboard" text="Aggregating Enterprise Data..." />;
+    if (!stats) return <div className="page-container"><div style={{ padding: '100px', textAlign: 'center', color: 'red' }}>Error: Could not fetch dashboard statistics. Please ensure the backend is running.</div></div>;
 
     const { summary, riskDistribution, geoRisk, productHealth, riskTrend } = stats;
 
     return (
         <div className="page-container">
             <div className="page-header">
-                <h1>Enterprise Risk Dashboard</h1>
-                <p>Multi-Agent Ensemble Monitoring (Sources: <b>Multi-Source Data Lake</b>)</p>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+                    <div>
+                        <h1>Enterprise Risk Dashboard</h1>
+                        <p>Multi-Agent Ensemble Monitoring (Sources: <b>Multi-Source Data Lake</b>)</p>
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                        <div style={{ fontSize: '12px', fontWeight: '700', color: 'var(--accent-emerald)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <span className="pulsing-dot"></span> LIVE STREAM
+                        </div>
+                        <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Last Updated: {summary.lastUpdated}</div>
+                    </div>
+                </div>
             </div>
 
             {/* Metric Cards - Shifted to Ensemble Logic */}
             <div className="metrics-grid animate-stagger">
                 <MetricCard color="blue" icon="👥" label="Portfolio Registry" value={summary.totalCustomers.toLocaleString()} change="Enterprise" positive />
                 <MetricCard color="red" icon="🤖" label="Ensemble High-Risk" value={summary.criticalRisk} change="+5%" positive={false} />
-                <MetricCard color="purple" icon="🧠" label="Decision Interventions" value={summary.interventionsTriggered} change="Automated" positive />
-                <MetricCard color="amber" icon="🚨" label="Governance Alerts" value={summary.activeAlerts} change="Low Conf" positive={false} />
+                <MetricCard color="purple" icon="🧠" label="Decision Interventions" value={summary.interventionsTriggered.toLocaleString()} change="Automated" positive />
+                <MetricCard color="amber" icon="🚨" label="Governance Alerts" value={summary.activeAlerts.toLocaleString()} change="Low Conf" positive={false} />
                 <MetricCard color="green" icon="💰" label="Est. Avoided Loss" value={summary.costSavings} change="Q1 Target" positive />
             </div>
 

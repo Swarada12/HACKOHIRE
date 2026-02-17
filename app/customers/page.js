@@ -4,41 +4,63 @@ import { useState, useMemo, useEffect } from 'react';
 import { getCustomers } from '../lib/api';
 import Link from 'next/link';
 
+import Loader from '../components/Loader';
+
 export default function CustomersPage() {
     const [customers, setCustomers] = useState([]);
     const [totalCount, setTotalCount] = useState(0);
+    const [stats, setStats] = useState({ total: 0, critical: 0, high: 0, low: 0 });
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
     const [filter, setFilter] = useState('All');
+    const [inspectSignals, setInspectSignals] = useState(null);
 
     useEffect(() => {
         async function fetchData() {
             setLoading(true);
-            const response = await getCustomers(); // { customers: [...], total: 10000 }
+            const response = await getCustomers(filter);
             const data = response.customers || [];
 
-            // Map CSV data to UI model
-            const mapped = data.map(c => {
+            const mapped = (data || []).map(c => {
                 const delay = c.current_salary_delay_days || 0;
+                const util = c.credit_utilization || 0;
+                const savings = c.savings_change_pct || 0;
+
+                let sigs = c.signals || [];
+                if (sigs.length === 0) {
+                    if (delay > 0) sigs.push(`Salary Delay (${delay}d)`);
+                    if (util > 80) sigs.push(`High Util (${Math.round(util)}%)`);
+                    if (savings < -20) sigs.push(`Balance Drop (${Math.round(savings)}%)`);
+                }
 
                 return {
                     id: c.customer_id,
                     name: c.name,
                     productType: c.product_type || (c.loan_amount > 1000000 ? 'Home Loan' : 'Personal Loan'),
                     city: c.city || 'Mumbai',
-                    riskScore: c.risk_score, // Provided by backend unified scoring
-                    riskLevel: c.risk_level, // Provided by backend unified scoring
-                    signals: delay > 0 ? [`Salary Delay (${delay}d)`] : [],
+                    riskScore: Math.round(c.risk_score),
+                    riskLevel: c.risk_level,
+                    signals: sigs,
                     riskTrend: delay > 5 ? 'increasing' : 'stable',
-                    lastActivity: '2 hours ago' // Mock
+                    lastActivity: '⚡ LIVE'
                 };
             });
             setCustomers(mapped);
             setTotalCount(response.total || 0);
+
+            if (response.stats) {
+                setStats({
+                    total: response.stats.total,
+                    critical: response.stats.critical,
+                    high: response.stats.high,
+                    low: response.stats.low
+                });
+            }
+
             setLoading(false);
         }
         fetchData();
-    }, []);
+    }, [filter]);
 
     const filtered = useMemo(() => {
         return customers.filter(c => {
@@ -46,10 +68,9 @@ export default function CustomersPage() {
                 c.name.toLowerCase().includes(search.toLowerCase()) ||
                 c.id.toLowerCase().includes(search.toLowerCase()) ||
                 c.city.toLowerCase().includes(search.toLowerCase());
-            const matchesFilter = filter === 'All' || c.riskLevel === filter;
-            return matchesSearch && matchesFilter;
+            return matchesSearch;
         });
-    }, [search, filter, customers]);
+    }, [search, customers]);
 
     const riskColor = (level) => {
         switch (level) {
@@ -60,24 +81,51 @@ export default function CustomersPage() {
         }
     };
 
-    if (loading) {
-        return <div className="page-container"><div style={{ padding: '50px', textAlign: 'center' }}>Syncing with Central Risk Data Lake...</div></div>;
-    }
+    if (loading) return <Loader type="monitor" text="Syncing Portfolio Data..." />;
 
     return (
         <div className="page-container">
+            {/* Signal Details Modal */}
+            {inspectSignals && (
+                <div style={{
+                    position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+                    backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 2000,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center'
+                }} onClick={() => setInspectSignals(null)}>
+                    <div style={{
+                        backgroundColor: 'white', padding: '24px', borderRadius: '12px',
+                        width: '320px', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
+                        border: '1px solid var(--border-light)'
+                    }} onClick={e => e.stopPropagation()}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                            <h3 style={{ margin: 0, fontSize: '16px', fontWeight: '800' }}>Active Indicators</h3>
+                            <button onClick={() => setInspectSignals(null)} style={{ border: 'none', background: 'none', cursor: 'pointer', fontSize: '18px' }}>✕</button>
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                            {inspectSignals.map((s, i) => (
+                                <div key={i} style={{
+                                    padding: '10px', background: '#fef2f2', border: '1px solid #fee2e2',
+                                    borderRadius: '6px', color: '#991b1b', fontSize: '13px', fontWeight: '700'
+                                }}>
+                                    🚩 {s}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <div className="page-header">
                 <h1>Customer Risk Monitor</h1>
                 <p>View and manage all monitored customers (Total: <b>{totalCount.toLocaleString()}</b>)</p>
             </div>
-
-            {/* Summary Stats */}
+            {/* ... Summary Stats and Filters ... */}
             <div className="metrics-grid animate-stagger" style={{ marginBottom: '24px' }}>
                 {[
-                    { label: 'Total Monitored', value: totalCount.toLocaleString(), color: 'blue', icon: '👥' },
-                    { label: 'Critical', value: customers.filter(c => c.riskLevel === 'Critical').length, color: 'red', icon: '🚨' },
-                    { label: 'High Risk', value: customers.filter(c => c.riskLevel === 'High').length, color: 'amber', icon: '⚠️' },
-                    { label: 'Low Risk', value: customers.filter(c => c.riskLevel === 'Low').length, color: 'green', icon: '✅' },
+                    { label: 'Total Monitored', value: stats.total.toLocaleString(), color: 'blue', icon: '👥' },
+                    { label: 'Critical', value: stats.critical.toLocaleString(), color: 'red', icon: '🚨' },
+                    { label: 'High Risk', value: stats.high.toLocaleString(), color: 'amber', icon: '⚠️' },
+                    { label: 'Low Risk', value: stats.low.toLocaleString(), color: 'green', icon: '✅' },
                 ].map((s, i) => (
                     <div key={i} className={`metric-card ${s.color}`}>
                         <div className={`metric-icon ${s.color}`}><span style={{ fontSize: '20px' }}>{s.icon}</span></div>
@@ -87,7 +135,6 @@ export default function CustomersPage() {
                 ))}
             </div>
 
-            {/* Filters */}
             <div className="filter-bar">
                 <div className="search-wrapper">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -108,7 +155,6 @@ export default function CustomersPage() {
                 ))}
             </div>
 
-            {/* Table */}
             <div className="card" style={{ padding: 0 }}>
                 <div className="table-container">
                     <table className="data-table">
@@ -154,11 +200,16 @@ export default function CustomersPage() {
                                         </span>
                                     </td>
                                     <td>
-                                        <span style={{
-                                            background: c.signals.length > 0 ? '#fee2e2' : '#d1fae5',
-                                            color: c.signals.length > 0 ? '#dc2626' : '#059669',
-                                            padding: '3px 10px', borderRadius: '12px', fontSize: '12px', fontWeight: '700'
-                                        }}>
+                                        <span
+                                            onClick={() => c.signals.length > 0 && setInspectSignals(c.signals)}
+                                            style={{
+                                                background: c.signals.length > 0 ? '#fee2e2' : '#d1fae5',
+                                                color: c.signals.length > 0 ? '#dc2626' : '#059669',
+                                                padding: '3px 10px', borderRadius: '12px', fontSize: '12px', fontWeight: '700',
+                                                cursor: c.signals.length > 0 ? 'help' : 'default',
+                                                border: c.signals.length > 0 ? '1px solid #fecaca' : 'none'
+                                            }}
+                                        >
                                             {c.signals.length} signals
                                         </span>
                                     </td>

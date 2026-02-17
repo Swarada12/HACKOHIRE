@@ -1,0 +1,24 @@
+Feature Store: Successfully loaded all 10000 customer sources.
+2026-02-17T02:17:06+0530 [INFO] [cli] Starting production HTTP BentoServer from "service:BankRiskService" listening on http://localhost:8000 (Press CTRL+C to quit)
+Feature Store: Successfully loaded all 10000 customer sources.
+2026-02-17T02:17:10+0530 [INFO] [entry_service:bank_risk_service:1] Service bank_risk_service initialized
+GenAI Model google/gemini-2.0-flash-exp:free Failed (404): {"error":{"message":"No endpoints found for google/gemini-2.0-flash-exp:free.","code":404},"user_id":"user_316SfMQKUTdgQjQnNHPJP4tAWoE"}
+GenAI Model meta-llama/llama-3-8b-instruct:free Failed (404): {"error":{"message":"No endpoints found for meta-llama/llama-3-8b-instruct:free.","code":404},"user_id":"user_316SfMQKUTdgQjQnNHPJP4tAWoE"}
+GenAI Model mistralai/mistral-7b-instruct:free Failed (404): {"error":{"message":"No endpoints found for mistralai/mistral-7b-instruct:free.","code":404},"user_id":"user_316SfMQKUTdgQjQnNHPJP4tAWoE"}
+GenAI Model microsoft/phi-3-mini-128k-instruct:free Failed (404): {"error":{"message":"No endpoints found for microsoft/phi-3-mini-128k-instruct:free.","code":404},"user_id":"user_316SfMQKUTdgQjQnNHPJP4tAWoE"}
+GenAI Model openrouter/auto Error: HTTPSConnectionPool(host='openrouter.ai', port=443): Read timed out. (read timeout=8)
+All GenAI models failed. Using simulation.
+2026-02-17T02:17:51+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:57467 (scheme=http,method=POST,path=/analyze_customer_risk,type=application/json,length=44) (status=200,type=application/json,length=3367) 12809.438ms (trace=30a4935eae4b6fb184b4fd7892e2ff73,span=319d4d9e15c3d3da,sampled=0,service.name=None)
+2026-02-17T02:18:07+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:63540 (scheme=http,method=POST,path=/list_customers,type=application/json,length=36) (status=200,type=application/json,length=463572) 1734.727ms (trace=9c053a5074a9be41a7c60a3a4ab8ae33,span=2925efb6052613c3,sampled=0,service.name=None)
+2026-02-17T02:18:09+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:63541 (scheme=http,method=POST,path=/list_customers,type=application/json,length=36) (status=200,type=application/json,length=463572) 2069.969ms (trace=0b06ef2f872989bbce8f58c314cd055a,span=f9ed2a921808fb02,sampled=0,service.name=None)
+2026-02-17T02:18:11+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:52342 (scheme=http,method=POST,path=/list_customers,type=application/json,length=41) (status=200,type=application/json,length=76915) 1781.618ms (trace=55ba8a8b73982f80852ec8be2fdaa25e,span=95901112c7ae3a60,sampled=0,service.name=None)
+GenAI Model google/gemini-2.0-flash-exp:free Failed (404): {"error":{"message":"No endpoints found for google/gemini-2.0-flash-exp:free.","code":404},"user_id":"user_316SfMQKUTdgQjQnNHPJP4tAWoE"}
+GenAI Model meta-llama/llama-3-8b-instruct:free Failed (404): {"error":{"message":"No endpoints found for meta-llama/llama-3-8b-instruct:free.","code":404},"user_id":"user_316SfMQKUTdgQjQnNHPJP4tAWoE"}
+GenAI Model mistralai/mistral-7b-instruct:free Failed (404): {"error":{"message":"No endpoints found for mistralai/mistral-7b-instruct:free.","code":404},"user_id":"user_316SfMQKUTdgQjQnNHPJP4tAWoE"}
+GenAI Model microsoft/phi-3-mini-128k-instruct:free Failed (404): {"error":{"message":"No endpoints found for microsoft/phi-3-mini-128k-instruct:free.","code":404},"user_id":"user_316SfMQKUTdgQjQnNHPJP4tAWoE"}
+2026-02-17T02:18:29+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:59468 (scheme=http,method=POST,path=/analyze_customer_risk,type=application/json,length=44) (status=200,type=application/json,length=3690) 15361.728ms (trace=e37981642ee7e562257b6ddb05a07835,span=0d4fd913e02997b0,sampled=0,service.name=None)
+GenAI Model google/gemini-2.0-flash-exp:free Failed (404): {"error":{"message":"No endpoints found for google/gemini-2.0-flash-exp:free.","code":404},"user_id":"user_316SfMQKUTdgQjQnNHPJP4tAWoE"}
+GenAI Model meta-llama/llama-3-8b-instruct:free Failed (404): {"error":{"message":"No endpoints found for meta-llama/llama-3-8b-instruct:free.","code":404},"user_id":"user_316SfMQKUTdgQjQnNHPJP4tAWoE"}
+GenAI Model mistralai/mistral-7b-instruct:free Failed (404): {"error":{"message":"No endpoints found for mistralai/mistral-7b-instruct:free.","code":404},"user_id":"user_316SfMQKUTdgQjQnNHPJP4tAWoE"}
+GenAI Model microsoft/phi-3-mini-128k-instruct:free Failed (404): {"error":{"message":"No endpoints found for microsoft/phi-3-mini-128k-instruct:free.","code":404},"user_id":"user_316SfMQKUTdgQjQnNHPJP4tAWoE"}
+2026-02-17T02:18:39+0530 [INFO] [entry_service:bank_risk_service:1] 127.0.0.1:59469 (scheme=http,method=POST,path=/analyze_customer_risk,type=application/json,length=44) (status=200,type=application/json,length=3577) 10049.439ms (trace=f4171417bd574e57973c874c3ab10834,span=eb32d81a8dcfdf32,sampled=0,service.name=None)

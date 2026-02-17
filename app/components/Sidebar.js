@@ -2,9 +2,33 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { getDashboardStats } from '../lib/api';
 
 export default function Sidebar() {
     const pathname = usePathname();
+    const [stats, setStats] = useState({ critical: 0, high: 0 });
+
+    useEffect(() => {
+        async function fetchStats() {
+            try {
+                const data = await getDashboardStats();
+                if (data && data.summary) {
+                    // Find High Risk count from distribution
+                    const highRisk = data.riskDistribution?.find(d => d.name === 'High')?.value || 0;
+                    setStats({
+                        critical: data.summary.criticalRisk,
+                        high: highRisk // Use raw High Risk count for Pending
+                    });
+                }
+            } catch (e) {
+                console.error("Sidebar Stats Error", e);
+            }
+        }
+        fetchStats();
+        const interval = setInterval(fetchStats, 30000); // Poll every 30s
+        return () => clearInterval(interval);
+    }, []);
 
     const navItems = [
         {
@@ -18,7 +42,17 @@ export default function Sidebar() {
             section: 'Operations',
             items: [
                 { href: '/customers', label: 'Customer Risk Monitor', icon: UsersIcon },
-                { href: '/alerts', label: 'Intervention Hub', icon: AlertIcon },
+                {
+                    href: '/alerts',
+                    label: 'Intervention Hub',
+                    icon: AlertIcon,
+                    customBadge: stats.critical > 0 ? (
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', lineHeight: '1.2' }}>
+                            <span style={{ fontSize: '10px', color: '#dc2626', fontWeight: '700' }}>Active: {stats.critical}</span>
+                            <span style={{ fontSize: '10px', color: '#d97706', fontWeight: '600' }}>Pending: {stats.high}</span>
+                        </div>
+                    ) : null
+                },
             ]
         },
 
@@ -27,9 +61,9 @@ export default function Sidebar() {
     return (
         <aside className="sidebar">
             <div className="sidebar-header">
-                <div className="sidebar-logo">B</div>
+                <div className="sidebar-logo">P</div>
                 <div className="sidebar-brand">
-                    <h2>Barclays EWS</h2>
+                    <h2>Praeventix EWS</h2>
                     <span>Early Warning System</span>
                 </div>
             </div>
@@ -42,10 +76,20 @@ export default function Sidebar() {
                                 key={item.href}
                                 href={item.href}
                                 className={`nav-link ${pathname === item.href ? 'active' : ''}`}
+                                style={{ justifyContent: 'space-between' }}
                             >
-                                <item.icon />
-                                <span>{item.label}</span>
-                                {item.badge && <span className="nav-badge">{item.badge}</span>}
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                    <item.icon />
+                                    <span>{item.label}</span>
+                                </div>
+                                {item.customBadge && item.customBadge}
+                                {item.badge && <span className="nav-badge" style={{
+                                    background: 'var(--bg-tertiary)',
+                                    color: 'var(--text-primary)',
+                                    border: '1px solid var(--border-light)',
+                                    fontSize: '11px',
+                                    fontWeight: '700'
+                                }}>{item.badge}</span>}
                             </Link>
                         ))}
                     </div>
