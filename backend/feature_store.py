@@ -89,6 +89,7 @@ class FeatureStore:
             f['f_savings_change_pct'] = float(core['savings_change_pct'])
             f['f_loan_amount'] = float(core['loan_amount'])
             f['f_monthly_emi'] = float(core['monthly_emi'])
+            f['t_current_salary_delay'] = float(core.get('current_salary_delay_days', 0))
             
             # Persistent Strategy Indices (from DB)
             f['f_db_ability'] = core.get('ability_score')
@@ -133,8 +134,33 @@ class FeatureStore:
             f['cash_hoarding_index'] = round(atm_spends / (recent_outflow + 1), 2)
 
             # 8. Stress Acceleration (Derived)
-            # Proxy: Slope of balance check frequency across latest session periods
             f['stress_acceleration_index'] = round(bal_checks * 1.5 if bal_checks > 5 else bal_checks, 2)
+
+            # 9. Utility Latency (New Signal)
+            util_df = pd.read_sql_query("SELECT * FROM utility_payments WHERE customer_id = ?", conn, params=(customer_id,))
+            if not util_df.empty:
+                f['t_utility_delay_days'] = round(util_df['days_past_due'].mean(), 1)
+            else:
+                f['t_utility_delay_days'] = 0.0
+
+            # 10. Auto-Debit Failures (New Signal)
+            f['t_auto_debit_fail_count'] = len(trans_df[trans_df['transaction_type'] == 'EMI_BOUNCE'])
+
+            # 11. Discretionary Spend Reduction (Belt Tightening)
+            # Compare avg daily spend on 'Store'/'Entertainment' in recent vs older
+            # Note: We only have 30 days of data in current seed, so we compare Week 1 vs Week 4
+            # Week 1 (Recent) vs Week 4 (Past)
+            recent_disc = trans_df[trans_df['timestamp'] > (datetime.now() - timedelta(days=7)).strftime('%Y-%m-%d')]
+            past_disc = trans_df[trans_df['timestamp'] < (datetime.now() - timedelta(days=21)).strftime('%Y-%m-%d')]
+            
+            recent_avg = recent_disc[recent_disc['category'].isin(['Store', 'Dining'])]['amount'].mean()
+            past_avg = past_disc[past_disc['category'].isin(['Store', 'Dining'])]['amount'].mean()
+            
+            if pd.isna(recent_avg): recent_avg = 0
+            if pd.isna(past_avg): past_avg = 1 # Avoid div by zero
+            
+            # If recent spend is < 50% of past spend, it's tightening
+            f['t_discretionary_trend'] = round(recent_avg / past_avg, 2)
 
             # --- END HIGH IQ SIGNALS ---
 
@@ -180,7 +206,14 @@ class FeatureStore:
     def get_customers(self, limit: int = 100, risk_filter: str = "All") -> dict:
         conn = self.get_conn()
         try:
-            query = "SELECT * FROM customers"
+            # Enhanced Query with Sub-selects for Advanced Signals
+            query = """
+                SELECT c.*, 
+                (SELECT COUNT(*) FROM transactions t WHERE t.customer_id = c.customer_id AND t.transaction_type = 'EMI_BOUNCE') as bounce_count,
+                (SELECT AVG(days_past_due) FROM utility_payments u WHERE u.customer_id = c.customer_id) as avg_utility_delay
+                FROM customers c
+            """
+            
             if risk_filter != "All":
                 query += f" WHERE risk_level = '{risk_filter}'"
             query += f" LIMIT {limit}"
@@ -198,6 +231,14 @@ class FeatureStore:
                     sigs.append(f"High Util ({int(c['credit_utilization'])}%)")
                 if c.get('savings_change_pct', 0) < -20: 
                     sigs.append(f"Balance Drop ({int(c['savings_change_pct'])}%)")
+                
+                # New Advanced Signals
+                if c.get('bounce_count', 0) > 0:
+                    sigs.append(f"EMI Bounce ({int(c['bounce_count'])}x)")
+                
+                util_delay = c.get('avg_utility_delay')
+                if util_delay and util_delay > 7:
+                    sigs.append(f"Bill Lag ({int(util_delay)}d)")
                 
                 c['signals'] = sigs
                 customers.append(c)

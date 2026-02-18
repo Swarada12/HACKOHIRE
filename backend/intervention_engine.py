@@ -8,6 +8,40 @@ class InterventionEngine:
     Selects the best proactive action for at-risk customers.
     """
     
+    
+    def _calculate_impact(self, loan_amount: float, risk_score: int, offer_id: str) -> dict:
+        """
+        Profit Engine: Quantifies the financial impact of the intervention.
+        """
+        # 1. Default Probability (Calibrated to Risk Score)
+        default_prob_current = min(0.99, (risk_score / 140)) # e.g. 70 score -> 50% risk
+        
+        # 2. Effectiveness of Intervention (Modifier)
+        modifiers = {
+            "OFF-MORATORIUM": 0.4,    # High impact
+            "OFF-SALARY-ADV": 0.3,    # Good impact
+            "OFF-TENURE": 0.25,       # Moderate
+            "OFF-LIMIT-CAP": 0.15,    # Prevention
+            "OFF-CONSOLIDATION": 0.35, 
+            "OFF-GOVERNANCE": 0.5,    # Very high impact (human touch)
+            "OFF-GAMBLING-BLOCK": 0.3,
+            "OFF-WELLNESS": 0.1,
+            "OFF-STD": 0.0
+        }
+        improvement = modifiers.get(offer_id, 0.0)
+        default_prob_new = default_prob_current * (1.0 - improvement)
+        
+        # 3. Financials
+        recovery_gain = loan_amount * (default_prob_current - default_prob_new)
+        coll_cost_saved = recovery_gain * 0.18 # Avg 18% collection cost
+        
+        return {
+            "default_prob_current": round(default_prob_current * 100, 1),
+            "default_prob_projected": round(default_prob_new * 100, 1),
+            "recovery_gain": int(recovery_gain),
+            "cost_savings": int(coll_cost_saved)
+        }
+
     def generate_intervention(self, customer_id: str, features: dict, ml_result: dict, context: dict, unified_score: int = None) -> dict:
         """
         Hyper-Personalized Intervention Logic.

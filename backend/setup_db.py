@@ -77,11 +77,25 @@ def setup_database():
         )
     ''')
 
+    # 5. Utility Payments (New Signal: Bill Lag)
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS utility_payments (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            customer_id TEXT,
+            bill_date DATETIME,
+            payment_date DATETIME,
+            amount REAL,
+            category TEXT, -- 'Electricity', 'Postpaid', 'Broadband'
+            days_past_due INTEGER,
+            FOREIGN KEY (customer_id) REFERENCES customers (customer_id)
+        )
+    ''')
+
     conn.commit()
     return conn
 
 def seed_data(conn):
-    print("Seeding 300 high-fidelity customers...")
+    print("Seeding 300 high-fidelity customers with Advanced Signals...")
     cursor = conn.cursor()
     
     first_names = ['Aarav', 'Advait', 'Vihaan', 'Arjun', 'Ananya', 'Ishaan', 'Sai', 'Aadhya', 'Vivaan', 'Zara', 'Kabir', 'Riya', 'Aaryan', 'Diya', 'Reyansh', 'Myra', 'Siddharth', 'Avani', 'Karthik', 'Sneha', 'Manish', 'Pooja', 'Rohan', 'Sanya', 'Vikram', 'Neha', 'Rahul', 'Shreya', 'Amit', 'Sunita']
@@ -149,6 +163,7 @@ def seed_data(conn):
     all_transactions = []
     all_salaries = []
     all_activity = []
+    all_utility_bills = []
     
     for cid, name, city, prod, income, salary, credit, util, savings_change, delay, loan_amt, emi, score, lvl, action, ability, willingness, rare_type in customers:
         # Salary History (Last 6 months)
@@ -173,8 +188,23 @@ def seed_data(conn):
             
             # EMI Payment
             if d == 15:
-                all_transactions.append((cid, date, emi, 'EMI', 'Bank', 'DEBIT'))
-        
+                # Signal: EMI Bounce
+                if score > 80 and np.random.random() > 0.7:
+                     all_transactions.append((cid, date, 0, 'EMI', 'Bank', 'EMI_BOUNCE'))
+                else:
+                     all_transactions.append((cid, date, emi, 'EMI', 'Bank', 'DEBIT'))
+
+        # Utility Payments (Last 3 months)
+        for m in range(1, 4):
+            bill_date = datetime.now() - timedelta(days=30*m)
+            # High risk users pay late
+            days_late = np.random.randint(0, 5)
+            if score > 60: days_late = np.random.randint(5, 20)
+            
+            pay_date = bill_date + timedelta(days=days_late)
+            amt = np.random.randint(800, 3000)
+            all_utility_bills.append((cid, bill_date, pay_date, amt, 'Electricity', days_late))
+
         # Activity
         for _ in range(np.random.randint(5, 50)):
             ts = datetime.now() - timedelta(minutes=np.random.randint(1, 43200))
@@ -187,6 +217,7 @@ def seed_data(conn):
     cursor.executemany('INSERT INTO transactions (customer_id, timestamp, amount, category, merchant, transaction_type) VALUES (?,?,?,?,?,?)', all_transactions)
     cursor.executemany('INSERT INTO salary_history (customer_id, month_year, amount, delay_days, employer) VALUES (?,?,?,?,?)', all_salaries)
     cursor.executemany('INSERT INTO app_activity (customer_id, timestamp, action, device) VALUES (?,?,?,?)', all_activity)
+    cursor.executemany('INSERT INTO utility_payments (customer_id, bill_date, payment_date, amount, category, days_past_due) VALUES (?,?,?,?,?,?)', all_utility_bills)
 
     conn.commit()
     print("Database seeding complete!")

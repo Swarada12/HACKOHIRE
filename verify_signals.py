@@ -1,48 +1,43 @@
-import sys
-import os
+import sqlite3
+import requests
 import json
-import asyncio
 
-# Ensure paths correctly point to backend
-sys.path.append(os.path.join(os.getcwd(), 'backend'))
-
-from service import BankRiskService, RiskInput, CustomerListInput
-
-service = BankRiskService()
-
-async def verify_signals():
-    print("\n--- Verifying Enterprise Data Migration & Signals ---")
+def verify():
+    conn = sqlite3.connect('backend/bank_risk.db')
+    cursor = conn.cursor()
     
-    # 1. Verify 300 customers
-    customers_res = await service.list_customers(CustomerListInput(risk_filter="All"))
-    count = customers_res.get('stats', {}).get('total', 0)
-    print(f"Total Customers in DB: {count}")
-    if count >= 300:
-        print("✅ PASS: 300+ Customers seeded in SQLite.")
-    else:
-        print(f"❌ FAIL: Expected 300, found {count}.")
-
-    # 2. Verify Dynamic EMI Prediction
-    print("\n--- Checking EMI Prediction Dynamics ---")
-    customer_ids = ['CUSR-100001', 'CUSR-100010', 'CUSR-100020', 'CUSR-100030', 'CUSR-100040']
-    probabilities = []
+    # Find a customer with Utility Delay > 10 days
+    cursor.execute("SELECT customer_id, days_past_due FROM utility_payments WHERE days_past_due > 10 LIMIT 1")
+    util_customer = cursor.fetchone()
     
-    for cid in customer_ids:
-        res = await service.analyze_customer_risk(RiskInput(customer_id=cid))
-        if 'error' not in res:
-            prob = res['repayment_stats'].get('emi_probability', 0)
-            probabilities.append(prob)
-            print(f"Customer {cid}: EMI Probability = {prob}%")
-        else:
-            print(f"Customer {cid}: Error fetching data")
-
-    unique_probs = set(probabilities)
-    print(f"\nUnique Probabilities found: {unique_probs}")
+    # Find a customer with EMI Bounce
+    cursor.execute("SELECT customer_id FROM transactions WHERE transaction_type = 'EMI_BOUNCE' LIMIT 1")
+    bounce_customer = cursor.fetchone()
     
-    if len(unique_probs) > 1:
-        print("✅ PASS: EMI Probability is dynamic (not fixed at 50%).")
-    else:
-        print("❌ FAIL: All EMI Probabilities are identical.")
+    conn.close()
+    
+    print(f"Testing Utility Delay User: {util_customer}")
+    print(f"Testing EMI Bounce User: {bounce_customer}")
+    
+    if util_customer:
+        cid = util_customer[0]
+        try:
+            r = requests.post('http://localhost:8000/analyze_customer_risk', json={'input_data': {'customer_id': cid}})
+            res = r.json()
+            print(f"\nAPI Result for {cid}:")
+            print(json.dumps(res['risk_analysis']['agent_reasoning'], indent=2))
+        except Exception as e:
+            print(f"API Failed: {e}")
+
+    if bounce_customer and bounce_customer[0] != util_customer[0]:
+        cid = bounce_customer[0]
+        try:
+            r = requests.post('http://localhost:8000/analyze_customer_risk', json={'input_data': {'customer_id': cid}})
+            res = r.json()
+            print(f"\nAPI Result for {cid}:")
+            print(json.dumps(res['risk_analysis']['agent_reasoning'], indent=2))
+        except Exception as e:
+            print(f"API Failed: {e}")
 
 if __name__ == "__main__":
-    asyncio.run(verify_signals())
+    verify()

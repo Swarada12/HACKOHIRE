@@ -35,8 +35,17 @@ class MLRiskEngine:
         # Confidence Score calculation
         scores = [financial_score, behavioral_score, velocity_score]
         std_dev = np.std(scores)
-        confidence = max(0.6, 1.0 - (std_dev / 50)) 
         
+        # Smart Confidence: If any agent is screaming "FIRE" (High Risk), we are confident risk exists.
+        max_risk = max(scores)
+        if max_risk > 80:
+            # "One agent is critical -> High Confidence"
+            confidence = 0.92 - (std_dev / 200) 
+        elif max_risk > 60:
+            confidence = 0.85 - (std_dev / 200)
+        else:
+            confidence = max(0.6, 1.0 - (std_dev / 100))
+            
         return {
             "fusion_score": int(round(fusion_score)),
             "confidence_score": round(confidence, 2),
@@ -102,6 +111,12 @@ class MLRiskEngine:
             base += 25
             reasons.append(f"Multiple Loan Inquiries ({int(inquiries)}) in short span")
             
+        # New Signal: Belt Tightening (Discretionary Spend Reduction)
+        disc_trend = f.get('t_discretionary_trend', 1.0)
+        if disc_trend < 0.6 and disc_trend > 0:
+            base += 20
+            reasons.append(f"Sudden Drop in Discretionary Spend ({int(disc_trend*100)}% of normal)")
+
         if not reasons: reasons.append("Normal Behavioral Patterns")
         return min(99, max(5, base)), reasons
 
@@ -128,6 +143,18 @@ class MLRiskEngine:
             base += 15
             reasons.append("Sudden Spike in App Usage Velocity (>200%)")
             
+        # New Signal: Auto-Debit Bounce
+        bounces = f.get('t_auto_debit_fail_count', 0)
+        if bounces > 0:
+            base += 50 * bounces
+            reasons.append(f"CRITICAL: Auto-Debit Bounce Detected ({int(bounces)}x)")
+            
+        # New Signal: Utility Latency
+        util_delay = f.get('t_utility_delay_days', 0)
+        if util_delay > 7:
+            base += 20
+            reasons.append(f"Utility Bill Payment Lag ({int(util_delay)} days)")
+
         if not reasons: reasons.append("Stable Velocity & Salary Trends")
         return min(99, max(5, base)), reasons
 
