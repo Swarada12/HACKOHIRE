@@ -50,7 +50,7 @@ export async function getCustomers(filter = "All", search = "") {
         const res = await fetch('/api/ml/list_customers', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ input_data: { risk_filter: filter, search: search } })
+            body: JSON.stringify({ input_data: { risk_filter: filter, search: search, enrich_ml: true, limit: 500 } })
         });
         if (!res.ok) throw new Error('Failed to fetch customers');
         return await res.json();

@@ -5,9 +5,9 @@ import hashlib
 from datetime import datetime, timedelta
 import os
 
-DB_PATH = os.path.join(os.getcwd(), 'bank_risk.db')
+DB_PATH = os.path.join(os.getcwd(), 'bank_risk2.db')
 if 'backend' not in os.getcwd():
-    DB_PATH = os.path.join(os.getcwd(), 'backend', 'bank_risk.db')
+    DB_PATH = os.path.join(os.getcwd(), 'backend', 'bank_risk2.db')
 
 def setup_database():
     print(f"Initializing SQLite Database at {DB_PATH}...")
@@ -95,7 +95,7 @@ def setup_database():
     return conn
 
 def seed_data(conn):
-    print("Seeding 300 high-fidelity customers with Advanced Signals...")
+    print("Seeding 500 high-fidelity customers with Advanced Signals...")
     cursor = conn.cursor()
     
     first_names = ['Aarav', 'Advait', 'Vihaan', 'Arjun', 'Ananya', 'Ishaan', 'Sai', 'Aadhya', 'Vivaan', 'Zara', 'Kabir', 'Riya', 'Aaryan', 'Diya', 'Reyansh', 'Myra', 'Siddharth', 'Avani', 'Karthik', 'Sneha', 'Manish', 'Pooja', 'Rohan', 'Sanya', 'Vikram', 'Neha', 'Rahul', 'Shreya', 'Amit', 'Sunita']
@@ -105,7 +105,7 @@ def seed_data(conn):
     products = ['Personal Loan', 'Home Loan', 'Auto Loan', 'Credit Card']
     
     customers = []
-    for i in range(100001, 100301):
+    for i in range(100001, 100501):
         cid = f"CUSR-{i}"
         np.random.seed(i)
         name = f"{np.random.choice(first_names)} {np.random.choice(last_names)}"

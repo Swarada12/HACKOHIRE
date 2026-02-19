@@ -16,7 +16,8 @@ feature_store = FeatureStore()
 risk_engine = MLRiskEngine()
 context_solver = RareCaseSolver()
 intervention_engine = InterventionEngine()
-genai_engine = GenAI()
+# GenAI can be slow / network-bound. Keep it strictly on-demand.
+genai_engine = None
 
 from pydantic import BaseModel
 
@@ -39,6 +40,8 @@ class PatternInput(BaseModel):
 class CustomerListInput(BaseModel):
     risk_filter: str | None = "All"
     search: str | None = ""
+    enrich_ml: bool = False
+    limit: int = 500
 
 class ExecuteInput(BaseModel):
     customer_id: str
@@ -101,49 +104,84 @@ class BankRiskService:
     @bentoml.api
     async def list_customers(self, input_data: CustomerListInput) -> Dict[str, Any]:
         """
-        Returns customers enriched with ML model-driven signals.
-        Runs predict_ensemble() per customer so signals come from the trained models.
+        Returns customers from the DB, with optional ML enrichment.
         """
-        self.sync_pending_customers()
-        result = feature_store.get_customers(
-            limit=1000, 
-            risk_filter=input_data.risk_filter,
-            search=input_data.search
-        )
+        risk_filter = input_data.risk_filter
+        search = input_data.search
+        enrich_ml = input_data.enrich_ml
+        limit = input_data.limit
+        
+        print(f"DEBUG: Processing list_customers request: {input_data}")
+        try:
+             result = feature_store.get_customers(
+                limit=limit, 
+                risk_filter=risk_filter,
+                search=search
+            )
+             print(f"DEBUG: Fetched {len(result.get('customers', []))} customers from DB")
+        except Exception as e:
+             print(f"DEBUG: Error fetching customers: {e}")
+             return {"error": str(e)}
 
-        # Enrich each customer with ML model signals
-        for c in result.get("customers", []):
-            cid = c.get("customer_id")
-            if not cid:
-                continue
-            try:
-                detailed = feature_store.get_customer_detailed(cid)
-                if not detailed:
+        if enrich_ml:
+            customers = result.get("customers", [])
+            # Optimization: For large lists, perform deep ML enrichment only for the top 50 critical cases
+            # to maintain high performance while providing deep insights where they matter most.
+            enrich_limit = 50 if len(customers) > 100 else len(customers)
+            
+            print(f"DEBUG: enrich_ml enabled → deep enriching top {enrich_limit} of {len(customers)} customers")
+            
+            for i, c in enumerate(customers):
+                if i >= enrich_limit:
+                    break
+                    
+                cid = c.get("customer_id")
+                if not cid:
                     continue
-                features = detailed.get("features", {})
-                ml = risk_engine.predict_ensemble(features, customer_id=cid)
+                try:
+                    detailed = feature_store.get_customer_detailed(cid)
+                    if not detailed:
+                        continue
+                    features = detailed.get("features", {})
+                    ml = risk_engine.predict_ensemble(features, customer_id=cid)
 
-                # Extract model-driven signals from agent_reasoning
-                reasoning = ml.get("agent_reasoning", {})
-                model_signals = []
-                for domain, reasons in reasoning.items():
-                    for r in reasons:
-                        # Include both AI Flags and AI Insights, skip generic stable messages
-                        if ("Flag" in r or "Insight" in r) and "stable" not in r.lower() and "normal range" not in r.lower() and "acceptable" not in r.lower():
-                            model_signals.append(r)
-                
-                c["signals"] = model_signals
+                    reasoning = ml.get("agent_reasoning", {})
+                    ml_signals = [] 
+                    found_deep_insight = False
+                    for _, reasons in reasoning.items():
+                        for r in reasons:
+                            if ("Flag" in r or "Insight" in r) and "stable" not in r.lower() and "normal range" not in r.lower() and "acceptable" not in r.lower():
+                                ml_signals.append(f"🧠 {r}")
+                                found_deep_insight = True
+                    
+                    # Merge Strategy: If we have deep ML signals, we replace the basic heuristics
+                    # to keep the dashboard clean and "high-IQ" as per user request.
+                    if found_deep_insight:
+                        c["signals"] = ml_signals
+                    else:
+                        # Keep heuristics but maybe filter them if too many
+                        c["signals"] = c.get("signals", [])[:3] 
 
-                # Include agent scores so frontend can show model source
-                scores = ml.get("agent_scores", {})
-                c["agent_scores"] = {
-                    "xgboost": scores.get("xgboost_risk", 0),
-                    "lightgbm": scores.get("lightgbm_risk", 0),
-                    "lstm": scores.get("lstm_pattern", 0),
-                }
-            except Exception as e:
-                print(f"ML signal enrich error for {cid}: {e}")
+                    # Sync scores (using MAX logic)
+                    ml_score = int(ml.get("fusion_score", 0))
+                    db_score = int(c.get("risk_score", 0))
+                    c["risk_score"] = max(ml_score, db_score)
+                    
+                    score = c["risk_score"]
+                    c["risk_level"] = "Critical" if score >= 85 else "High" if score >= 45 else "Medium" if score >= 30 else "Low"
 
+                    scores = ml.get("agent_scores", {})
+                    c["agent_scores"] = {
+                        "xgboost": scores.get("xgboost_risk", 0),
+                        "lightgbm": scores.get("lightgbm_risk", 0),
+                        "lstm": scores.get("lstm_pattern", 0),
+                    }
+                except Exception as e:
+                    print(f"ML signal enrich error for {cid}: {e}")
+
+            # Re-sort by Real-Time Risk Score to ensure "Critical" comes first
+            customers.sort(key=lambda x: x.get("risk_score", 0), reverse=True)
+            
         return result
 
     @bentoml.api
@@ -160,7 +198,7 @@ class BankRiskService:
         """
         Aggregated stats from the enterprise data lake.
         """
-        self.sync_pending_customers()
+        # self.sync_pending_customers()
         return feature_store.get_dashboard_stats()
 
     @bentoml.api
@@ -292,8 +330,11 @@ class BankRiskService:
         shap_factors = ml_result.get('shap_explanation', [])
         top_factors = [{"feature": f['feature'].replace('_', ' ').title(), "value": f['value']} for f in shap_factors[:5]]
         
+        # GenAI is on-demand only (lazy init)
+        local_genai = GenAI()
+
         # Prepare parallel tasks
-        narrative_task = asyncio.to_thread(genai_engine.explain_risk, display_score, risk_level, top_factors, core.get('name', 'Customer'))
+        narrative_task = asyncio.to_thread(local_genai.explain_risk, display_score, risk_level, top_factors, core.get('name', 'Customer'))
         
         genai_context = {
             "name": core.get('name', 'Customer'),
@@ -302,7 +343,7 @@ class BankRiskService:
             "offer": intervention.get('recommended_offer', 'Financial Advisory'),
             "shap_explanation": shap_factors 
         }
-        intervention_task = asyncio.to_thread(genai_engine.generate_intervention, genai_context)
+        intervention_task = asyncio.to_thread(local_genai.generate_intervention, genai_context)
         
         # Execute in parallel
         genai_narrative, genai_msg = await asyncio.gather(narrative_task, intervention_task)

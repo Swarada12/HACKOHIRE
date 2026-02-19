@@ -20,7 +20,7 @@ export default function CustomersPage() {
             const response = await getCustomers(filter);
             const data = response.customers || [];
 
-            const mapped = (data || []).map(c => {
+            let mapped = (data || []).map(c => {
                 const delay = c.current_salary_delay_days || 0;
 
                 // Signals now come from the ML model's agent_reasoning
@@ -36,9 +36,14 @@ export default function CustomersPage() {
                     signals: sigs,
                     agentScores: c.agent_scores || null,
                     riskTrend: delay > 5 ? 'increasing' : 'stable',
-                    lastActivity: '⚡ LIVE'
+                    lastActivity: 'STABLE'
                 };
             });
+
+            if (filter === 'All') {
+                mapped.sort((a, b) => a.id.localeCompare(b.id, undefined, { numeric: true, sensitivity: 'base' }));
+            }
+
             setCustomers(mapped);
             setTotalCount(response.total || 0);
 
@@ -105,7 +110,7 @@ export default function CustomersPage() {
                                     padding: '10px', background: '#fef2f2', border: '1px solid #fee2e2',
                                     borderRadius: '6px', color: '#991b1b', fontSize: '12px', fontWeight: '600'
                                 }}>
-                                    🤖 {s}
+                                    {s}
                                 </div>
                             ))}
                             {inspectSignals.length === 0 && (

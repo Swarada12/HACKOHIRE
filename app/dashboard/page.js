@@ -50,8 +50,8 @@ export default function DashboardPage() {
                         <p>Multi-Agent Ensemble Monitoring (Sources: <b>Multi-Source Data Lake</b>)</p>
                     </div>
                     <div style={{ textAlign: 'right' }}>
-                        <div style={{ fontSize: '12px', fontWeight: '700', color: 'var(--accent-emerald)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                            <span className="pulsing-dot"></span> REALTIME
+                        <div style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            MONITORING
                         </div>
                         <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Last Updated: {summary.lastUpdated}</div>
                     </div>

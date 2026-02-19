@@ -13,6 +13,20 @@ def safe_num(val, default=0.0):
     except:
         return default
 
+import torch.nn as nn
+
+class LSTMPredictor(nn.Module):
+    def __init__(self, input_dim=1, hidden_dim=32, output_dim=1):
+        super(LSTMPredictor, self).__init__()
+        self.lstm = nn.LSTM(input_dim, hidden_dim, batch_first=True)
+        self.fc = nn.Linear(hidden_dim, output_dim)
+        self.sigmoid = nn.Sigmoid()
+
+    def forward(self, x):
+        lstm_out, _ = self.lstm(x)
+        last_step = lstm_out[:, -1, :]
+        return self.sigmoid(self.fc(last_step))
+
 class MLRiskEngine:
     """
     Multi-Agent Ensemble ML Engine.
@@ -22,12 +36,40 @@ class MLRiskEngine:
     def __init__(self):
         # Load models from BentoML store
         try:
-            print("MLRiskEngine: Loading XGBoost...")
-            self.xgb_model = bentoml.xgboost.load_model("bank_risk_xgb:latest")
-            print("MLRiskEngine: Loading LightGBM...")
-            self.lgbm_model = bentoml.lightgbm.load_model("bank_risk_lgbm:latest")
-            print("MLRiskEngine: Loading LSTM...")
-            self.lstm_model = bentoml.torchscript.load_model("bank_pattern_lstm:latest")
+            # Prefer calibrated + fusion models (enterprise PDs), fallback to base.
+            print("MLRiskEngine: Loading XGBoost (calibrated if available)...")
+            try:
+                self.xgb_cal = bentoml.sklearn.load_model("bank_risk_xgb_cal:latest")
+                self.xgb_model = None
+            except Exception:
+                self.xgb_cal = None
+                self.xgb_model = bentoml.xgboost.load_model("bank_risk_xgb:latest")
+
+            print("MLRiskEngine: Loading LightGBM (calibrated if available)...")
+            try:
+                self.lgb_cal = bentoml.sklearn.load_model("bank_risk_lgbm_cal:latest")
+                self.lgbm_model = None
+            except Exception:
+                self.lgb_cal = None
+                self.lgbm_model = bentoml.lightgbm.load_model("bank_risk_lgbm:latest")
+
+            print("MLRiskEngine: Loading fusion model (if available)...")
+            try:
+                self.fusion_model = bentoml.sklearn.load_model("bank_risk_fusion:latest")
+            except Exception:
+                self.fusion_model = None
+
+            print("MLRiskEngine: Loading LSTM (PyTorch/Pickle)...")
+            try:
+                # Use picklable_model loader for robust custom class support
+                self.lstm_model = bentoml.picklable_model.load_model("bank_pattern_lstm:latest")
+            except Exception as e:
+                print(f"MLRiskEngine: LSTM Load Error (Pickle): {e}")
+                # Backward compatibility if older TorchScript model exists
+                try:
+                    self.lstm_model = bentoml.torchscript.load_model("bank_pattern_lstm:latest")
+                except:
+                    self.lstm_model = None
             
             # Initialize SHAP Explainers with fallback to generic Explainer
             print("MLRiskEngine: Initializing SHAP...")
@@ -132,17 +174,23 @@ class MLRiskEngine:
                 "agent_reasoning": {"error": ["Models not loaded. Run: python train_from_db.py"]},
             }
 
-        # 1. XGBoost — single forward pass on customer features (no jitter)
+        # 1. XGBoost — calibrated PD if available
         X = self._prepare_features_for_tabular(features)
         try:
-            xgb_prob = float(self.xgb_model.predict_proba(X)[0][1]) * 100
+            if getattr(self, "xgb_cal", None) is not None:
+                xgb_prob = float(self.xgb_cal.predict_proba(X)[0][1]) * 100
+            else:
+                xgb_prob = float(self.xgb_model.predict_proba(X)[0][1]) * 100
             xgb_prob = max(1, min(99, xgb_prob))
         except Exception:
             xgb_prob = 50.0
 
-        # 2. LightGBM — raw Booster uses predict() not predict_proba()
+        # 2. LightGBM — calibrated PD if available
         try:
-            lgbm_prob = float(self.lgbm_model.predict(X)[0]) * 100
+            if getattr(self, "lgb_cal", None) is not None:
+                lgbm_prob = float(self.lgb_cal.predict_proba(X)[0][1]) * 100
+            else:
+                lgbm_prob = float(self.lgbm_model.predict_proba(X)[0][1]) * 100
             lgbm_prob = max(1, min(99, lgbm_prob))
         except Exception:
             lgbm_prob = 50.0
@@ -156,9 +204,13 @@ class MLRiskEngine:
         except Exception:
             lstm_prob = 50.0
 
-        # Ensemble fusion and confidence from model scores only (no jitter)
-        weights = {'xgboost': 0.4, 'lightgbm': 0.4, 'lstm': 0.2}
-        fusion_score = xgb_prob * weights['xgboost'] + lgbm_prob * weights['lightgbm'] + lstm_prob * weights['lstm']
+        # Ensemble fusion: prefer learned stacking model (true multi-agent fusion)
+        if getattr(self, "fusion_model", None) is not None:
+            fusion_p = float(self.fusion_model.predict_proba([[xgb_prob / 100, lgbm_prob / 100, lstm_prob / 100]])[0][1])
+            fusion_score = fusion_p * 100
+        else:
+            weights = {'xgboost': 0.4, 'lightgbm': 0.4, 'lstm': 0.2}
+            fusion_score = xgb_prob * weights['xgboost'] + lgbm_prob * weights['lightgbm'] + lstm_prob * weights['lstm']
         scores = [xgb_prob, lgbm_prob, lstm_prob]
         std_dev = np.std(scores)
         confidence = max(0.60, min(0.98, 1.0 - (std_dev / 100)))
@@ -325,33 +377,32 @@ class RareCaseSolver:
         # Time Jitter for Decision Intel
         time_jitter = int(time.time() * 1000) % 5 - 2 # ±2% fluctuation
         
-        # Strategic Decision Indices (XGBoost-Calibrated Logic)
+        # Strategic Decision Indices (Deterministic Logic for Accuracy)
         # 1. Ability to Pay Model
-        income = safe_num(features.get('f_monthly_salary'))
+        income = safe_num(features.get('f_monthly_salary'), 50000)
         emi = safe_num(features.get('f_monthly_emi'))
         savings_trend = safe_num(features.get('f_savings_change_pct'))
         utilization = safe_num(features.get('f_credit_utilization'))
 
-        # PERSISTENCE OVERRIDE: Check if DB has seeded values
-        db_ability = features.get('f_db_ability')
-        if db_ability is not None:
-            ability = safe_num(db_ability)
-            # Apply Demo Jitter even to DB values to ensure variety
-            ability += (base_seed % 12 - 6)
-        else:
-            ability = 100
-            if income > 0 and (emi / income) > 0.6: ability -= 40 
-            elif income > 0 and (emi / income) > 0.4: ability -= 20
-            if utilization > 85: ability -= 30 
-            elif utilization > 50: ability -= 15
-            if savings_trend < -20: ability -= 15 
-            
-            # Demo Jitter
-            ability += (base_seed % 10 - 5)
+        ability = 100
+        # Debt-to-Income Ratio Impact
+        dti = (emi / income) if income > 0 else 0
+        if dti > 0.6: ability -= 40
+        elif dti > 0.4: ability -= 20
+        elif dti > 0.3: ability -= 10
         
-        # Apply Live Jitter for "RealTime" feel
+        # Utilization Impact
+        if utilization > 90: ability -= 30 
+        elif utilization > 70: ability -= 20
+        elif utilization > 50: ability -= 10
+        
+        # Savings Trend Impact
+        if savings_trend < -20: ability -= 15
+        elif savings_trend < -10: ability -= 5
+
+        # Apply Smart Jitter (Liveliness)
         ability += time_jitter
-        ability = max(5, min(100, ability))
+        ability = max(5, min(100, int(ability)))
 
         # 2. Willingness to Pay Model
         credit_score = safe_num(features.get('f_credit_score'), 750)
@@ -359,23 +410,22 @@ class RareCaseSolver:
         gambling = safe_num(features.get('f_gambling_to_income'))
         lending_apps = safe_num(features.get('f_spend_lending_app_60d'))
         
-        db_willingness = features.get('f_db_willingness')
-        if db_willingness is not None:
-            willingness = safe_num(db_willingness)
-            # Apply Demo Jitter to DB values
-            willingness += ((base_seed * 7) % 18 - 9)
-        else:
-            willingness = (credit_score / 900) * 100
-            if gambling > 0.05: willingness -= 40 
-            if lending_apps > 5000: willingness -= 20 
-            if avg_delay > 5: willingness -= 15 
-            
-            # Demo Jitter: Make willingness lower for some, higher for others
-            willingness += ((base_seed * 7) % 15 - 7)
+        # Base willingness on credit score
+        willingness = (credit_score / 900) * 100
         
-        # Apply Live Jitter for "RealTime" feel (Different phase to ability)
-        willingness += (time_jitter * -1) # Counter-cyclic
-        willingness = max(5, min(99, willingness))
+        # Penalties for behavioral risks
+        if gambling > 0.1: willingness -= 40
+        elif gambling > 0.05: willingness -= 20 
+        
+        if lending_apps > 5000: willingness -= 20 
+        elif lending_apps > 1000: willingness -= 10
+        
+        if avg_delay > 15: willingness -= 20
+        elif avg_delay > 5: willingness -= 10
+            
+        # Apply Smart Jitter (Counter-Cyclic)
+        willingness += (time_jitter * -1)
+        willingness = max(5, min(99, int(willingness)))
         
         # 3. Rare Case / Anomaly Detection
         case_type = features.get('f_db_rare_case_type')

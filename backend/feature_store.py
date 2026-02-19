@@ -12,10 +12,10 @@ class FeatureStore:
     """
     
     def __init__(self):
-        self.db_path = os.path.join(os.getcwd(), 'bank_risk.db')
+        self.db_path = os.path.join(os.getcwd(), 'bank_risk2.db')
         # Fallback for local vs backend dir execution
         if not os.path.exists(self.db_path):
-            self.db_path = os.path.join(os.getcwd(), 'backend', 'bank_risk.db')
+            self.db_path = os.path.join(os.getcwd(), 'backend', 'bank_risk2.db')
         
         self.check_db()
 
@@ -179,19 +179,38 @@ class FeatureStore:
             # --- END HIGH IQ SIGNALS ---
 
             # Repayment Stats Logic (DYNAMIC FIX)
-            # Probability calculation based on SDI and Runway
-            prob = 95
+            # Probability calculation based on SDI, Runway, and Detection Context
+            prob = 98
             if f['sdi_index'] > 2: prob -= 30
             if f['financial_runway_days'] < 10: prob -= 20
             if f['f_credit_utilization'] > 85: prob -= 15
             if f['distress_spend_ratio'] > 0.1: prob -= 15
+            
+            # Context-Aware Penalties (New for Enterprise Alignment)
+            rare_type = core.get('rare_case_type')
+            if rare_type == "Victim of Circumstance": prob -= 18
+            if rare_type == "Strategic Defaulter": prob -= 45
+            
             prob = max(5, min(99, prob))
+
+            # Real Repayment Stats Calculation
+            total_repaid_df = pd.read_sql_query(
+                "SELECT SUM(amount) as paid FROM transactions WHERE customer_id = ? AND category = 'EMI' AND transaction_type != 'EMI_BOUNCE'", 
+                conn, params=(customer_id,)
+            )
+            total_repaid = total_repaid_df['paid'].iloc[0] if not total_repaid_df.empty and total_repaid_df['paid'].iloc[0] else 0.0
+            loan_amount = max(1.0, f['f_loan_amount']) # avoid div by zero
+            progress = min(100.0, (total_repaid / loan_amount) * 100)
+            
+            # Dynamic Next EMI Date (5th of next month)
+            next_month = (datetime.now().replace(day=1) + timedelta(days=32)).replace(day=5)
+            next_emi_str = next_month.strftime('%d %b %Y')
 
             repayment_stats = {
                 "total_loan_amount": f['f_loan_amount'],
-                "total_repaid": f['f_loan_amount'] * 0.4, # Mock tracking for now
-                "repayment_progress": 40.0,
-                "next_emi_date": "08 Mar 2026",
+                "total_repaid": total_repaid,
+                "repayment_progress": round(progress, 1),
+                "next_emi_date": next_emi_str,
                 "emi_probability": int(prob),
                 "status": "On Track" if prob > 70 else "At Risk"
             }
@@ -227,6 +246,10 @@ class FeatureStore:
             if risk_filter and risk_filter != "All":
                 query += " WHERE risk_level = ?"
                 params.append(risk_filter)
+                query += " ORDER BY risk_score DESC"
+            else:
+                # User Request: "In Risk level ALL the USers must be in Sorted ID"
+                query += " ORDER BY customer_id ASC"
             
             query += " LIMIT ?"
             params.append(limit)
@@ -237,8 +260,29 @@ class FeatureStore:
             customers = []
             for _, row in df.iterrows():
                 c = row.to_dict()
-                # Signals are populated by ML model in service.py list_customers
-                c['signals'] = []
+                
+                # Heuristic Signals (Fast, always available)
+                sigs = []
+                bounces = c.get('bounce_count', 0)
+                if bounces > 0:
+                    sigs.append(f"EMI Bounce Flag ({bounces})")
+                
+                util_delay = c.get('avg_utility_delay', 0)
+                if util_delay > 5:
+                    sigs.append(f"Utility Latency Insight ({round(util_delay, 1)}d)")
+                
+                sal_delay = c.get('current_salary_delay_days', 0)
+                if sal_delay > 2:
+                    sigs.append(f"Salary Credit Delay ({sal_delay}d)")
+                
+                score = c.get('risk_score', 0)
+                if score >= 80:
+                    sigs.append("Critical Ensemble Concern")
+                elif score >= 60:
+                    sigs.append("High-Risk Exposure Detected")
+
+                c['signals'] = sigs
+                
                 # Search Filter
                 name = (str(c.get('name')) if c.get('name') is not None else "").lower()
                 if search and search not in name:
@@ -327,7 +371,7 @@ class FeatureStore:
             # 5. ALERTS (Signal 5 & 10 proxy)
             alerts_df = pd.read_sql_query("""
                 SELECT customer_id, name, risk_score, current_salary_delay_days, credit_utilization, risk_level, suggested_action
-                FROM customers WHERE risk_level IN (?, ?) LIMIT 15
+                FROM customers WHERE risk_level IN (?, ?) ORDER BY risk_score DESC LIMIT 15
             """, conn, params=('Critical', 'High'))
             alerts = []
             signals = []

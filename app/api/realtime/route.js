@@ -11,7 +11,7 @@ async function fetchDashboardStats() {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({}),
-            signal: AbortSignal.timeout(10000),
+            signal: AbortSignal.timeout(30000),
         });
         if (res.ok) return await res.json();
     } catch (e) {
@@ -37,7 +37,8 @@ export async function GET() {
             };
 
             await sendDashboard();
-            const dashboardInterval = setInterval(sendDashboard, DASHBOARD_INTERVAL_MS);
+            // Auto Refresh Disabled as per User Request
+            // const dashboardInterval = setInterval(sendDashboard, DASHBOARD_INTERVAL_MS);
             const keepAlive = setInterval(() => {
                 try {
                     sendSSE(controller, 'ping', {});
@@ -45,7 +46,7 @@ export async function GET() {
             }, 15000);
 
             cleanup = () => {
-                clearInterval(dashboardInterval);
+                // clearInterval(dashboardInterval);
                 clearInterval(keepAlive);
             };
         },

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risk Engine Methodology Pipeline</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Unbounted:wght@400;600&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: 'Unbounded', sans-serif;
+        }
+
+        .clip-arrow {
+            clip-path: polygon(0% 0%, 85% 0%, 100% 50%, 85% 100%, 0% 100%, 15% 50%);
+        }
+
+        .clip-arrow-first {
+            clip-path: polygon(0% 0%, 85% 0%, 100% 50%, 85% 100%, 0% 100%);
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 min-h-screen flex flex-col items-center justify-center p-8">
+
+    <!-- Header Section -->
+    <div class="max-w-7xl w-full mb-12 relative">
+        <div class="absolute -top-10 -left-10 w-32 h-32 bg-cyan-400/20 rounded-full blur-3xl"></div>
+        <div class="absolute top-0 right-0 w-48 h-48 bg-blue-500/10 rounded-full blur-3xl"></div>
+
+        <h1 class="text-4xl md:text-5xl font-bold text-slate-900 mb-2 tracking-tight">
+            ML Risk Prediction Model — <span class="text-cyan-600">Multi‑Agent Explainable AI</span>
+        </h1>
+        <p class="text-slate-500 text-lg max-w-3xl mt-4 leading-relaxed">
+            A specialized swarm of <strong>3 Explainable AI Agents</strong> (Financial, Velocity, Behavioral) that
+            doesn't just predict risk—it explains the <span class="text-cyan-600 font-semibold">Root Cause</span> (e.g.,
+            "Job Loss" vs "Strategic Default"), enabling the system to help, not just punish.
+        </p>
+
+        <!-- Decoration -->
+        <div class="absolute top-2 right-10 grid grid-cols-4 gap-2 opacity-20">
+            <div class="w-4 h-4 bg-cyan-500"></div>
+            <div class="w-4 h-4 bg-blue-500"></div>
+            <div class="w-4 h-4 bg-cyan-600"></div>
+            <div class="w-4 h-4 bg-blue-600"></div>
+            <div class="w-4 h-4 bg-cyan-400"></div>
+            <div class="w-4 h-4 bg-blue-400"></div>
+        </div>
+    </div>
+
+    <!-- Pipeline Steps Container -->
+    <div class="max-w-[1400px] w-full grid grid-cols-1 md:grid-cols-5 gap-4">
+
+        <!-- STEP 01: Data Sourcing -->
+        <div class="relative group">
+            <!-- Chevron Header -->
+            <div
+                class="bg-gradient-to-r from-cyan-600 to-cyan-500 text-white p-4 h-16 flex items-center justify-center clip-arrow-first md:clip-arrow-first shadow-lg z-10 relative">
+                <span class="text-xl font-bold tracking-wider">Step 01</span>
+            </div>
+
+            <!-- Card Body -->
+            <div
+                class="bg-white rounded-b-2xl shadow-xl border border-slate-100 p-6 mt-2 h-[420px] flex flex-col hover:-translate-y-1 transition-transform duration-300">
+                <div class="w-12 h-12 bg-cyan-50 rounded-lg flex items-center justify-center mb-4 text-2xl">🎲</div>
+                <h3 class="text-lg font-bold text-slate-800 mb-3">Data Sourcing</h3>
+
+                <p class="text-xs text-slate-600 leading-relaxed mb-4 flex-grow">
+                    We generated <strong>high-fidelity synthetic financial data</strong> using Python Faker and NumPy to
+                    simulate realistic banking scenarios. This includes transaction logs, salary slips, and loan
+                    repayment history.
+                </p>
+                <div class="mt-auto border-t border-slate-100 pt-4">
+                    <span class="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Tech Stack</span>
+                    <div class="flex gap-2 mt-2">
+                        <span class="px-2 py-1 bg-yellow-50 text-yellow-700 text-xs rounded font-medium">Python
+                            Faker</span>
+                        <span class="px-2 py-1 bg-blue-50 text-blue-700 text-xs rounded font-medium">NumPy</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 02: Data Integration -->
+        <div class="relative group">
+            <!-- Chevron Header -->
+            <div
+                class="bg-gradient-to-r from-cyan-500 to-blue-500 text-white p-4 h-16 flex items-center justify-center md:clip-arrow shadow-lg z-10 relative">
+                <span class="text-xl font-bold tracking-wider">Step 02</span>
+            </div>
+
+            <div
+                class="bg-white rounded-b-2xl shadow-xl border border-slate-100 p-6 mt-2 h-[420px] flex flex-col hover:-translate-y-1 transition-transform duration-300">
+                <div class="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center mb-4 text-2xl">🔗</div>
+                <h3 class="text-lg font-bold text-slate-800 mb-3">Data Integration</h3>
+
+                <p class="text-xs text-slate-600 leading-relaxed mb-4 flex-grow">
+                    We gathered and <strong>integrated multiple data streams</strong>—Salary Credits, Utility Payments,
+                    and App Activity—into a centralized SQLite Feature Store for unified access.
+                </p>
+                <div class="mt-auto border-t border-slate-100 pt-4">
+                    <span class="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Tech Stack</span>
+                    <div class="flex gap-2 mt-2">
+                        <span class="px-2 py-1 bg-green-50 text-green-700 text-xs rounded font-medium">SQLite Feature
+                            Store</span>
+                        <span class="px-2 py-1 bg-slate-100 text-slate-700 text-xs rounded font-medium">SQL</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 03: Data Processing -->
+        <div class="relative group">
+            <!-- Chevron Header -->
+            <div
+                class="bg-gradient-to-r from-blue-500 to-indigo-500 text-white p-4 h-16 flex items-center justify-center md:clip-arrow shadow-lg z-10 relative">
+                <span class="text-xl font-bold tracking-wider">Step 03</span>
+            </div>
+
+            <div
+                class="bg-white rounded-b-2xl shadow-xl border border-slate-100 p-6 mt-2 h-[420px] flex flex-col hover:-translate-y-1 transition-transform duration-300">
+                <div class="w-12 h-12 bg-indigo-50 rounded-lg flex items-center justify-center mb-4 text-2xl">⚙️</div>
+                <h3 class="text-lg font-bold text-slate-800 mb-3">Data Processing</h3>
+
+                <p class="text-xs text-slate-600 leading-relaxed mb-4 flex-grow">
+                    Processed raw logs to extract <strong>150+ behavioral signals</strong> (e.g., Salary Delay, Spending
+                    Churn) using Python Pandas, removing noise and handling missing values.
+                </p>
+                <div class="mt-auto border-t border-slate-100 pt-4">
+                    <span class="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Tech Stack</span>
+                    <div class="flex gap-2 mt-2">
+                        <span class="px-2 py-1 bg-orange-50 text-orange-700 text-xs rounded font-medium">Pandas</span>
+                        <span
+                            class="px-2 py-1 bg-purple-50 text-purple-700 text-xs rounded font-medium">Scikit-Learn</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 04: Data Analysis -->
+        <div class="relative group">
+            <!-- Chevron Header -->
+            <div
+                class="bg-gradient-to-r from-indigo-500 to-purple-500 text-white p-4 h-16 flex items-center justify-center md:clip-arrow shadow-lg z-10 relative">
+                <span class="text-xl font-bold tracking-wider">Step 04</span>
+            </div>
+
+            <div
+                class="bg-white rounded-b-2xl shadow-xl border border-slate-100 p-6 mt-2 h-[420px] flex flex-col hover:-translate-y-1 transition-transform duration-300">
+                <div class="w-12 h-12 bg-purple-50 rounded-lg flex items-center justify-center mb-4 text-2xl">🧠</div>
+                <h3 class="text-lg font-bold text-slate-800 mb-3">Data Analysis</h3>
+
+                <p class="text-xs text-slate-600 leading-relaxed mb-4 flex-grow">
+                    We utilized a <strong>Multi-Agent AI Ensemble</strong> (XGBoost + LSTM) to analyze risk across
+                    Financial (Ability), Behavioral (Willingness), and Velocity dimensions simultaneously.
+                </p>
+                <div class="mt-auto border-t border-slate-100 pt-4">
+                    <span class="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Tech Stack</span>
+                    <div class="flex gap-2 mt-2">
+                        <span class="px-2 py-1 bg-slate-50 text-slate-700 text-xs rounded font-medium">XGBoost /
+                            LightGBM</span>
+                        <span class="px-2 py-1 bg-red-50 text-red-700 text-xs rounded font-medium">LSTM (PyTorch)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 05: Data Storage -->
+        <div class="relative group">
+            <!-- Chevron Header -->
+            <div
+                class="bg-gradient-to-r from-purple-500 to-pink-500 text-white p-4 h-16 flex items-center justify-center md:clip-arrow shadow-lg z-10 relative">
+                <span class="text-xl font-bold tracking-wider">Step 05</span>
+            </div>
+
+            <div
+                class="bg-white rounded-b-2xl shadow-xl border border-slate-100 p-6 mt-2 h-[420px] flex flex-col hover:-translate-y-1 transition-transform duration-300 border-b-4 border-b-pink-500">
+                <div class="w-12 h-12 bg-pink-50 rounded-lg flex items-center justify-center mb-4 text-2xl">💾</div>
+                <h3 class="text-lg font-bold text-slate-800 mb-3">Data Storage</h3>
+
+                <p class="text-xs text-slate-600 leading-relaxed mb-4 flex-grow">
+                    We stored processed <strong>Risk Profiles and Decisions</strong> in our Feature Store for real-time
+                    dashboard retrieval and high-speed API access.
+                </p>
+                <div class="mt-auto border-t border-slate-100 pt-4">
+                    <span class="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Tech Stack</span>
+                    <div class="flex gap-2 mt-2">
+                        <span class="px-2 py-1 bg-green-50 text-green-700 text-xs rounded font-medium">SQLite</span>
+                        <span class="px-2 py-1 bg-blue-50 text-blue-700 text-xs rounded font-medium">JSON API</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- Future Roadmap Section -->
+    <div class="mt-24 max-w-7xl w-full">
+        <h2 class="text-3xl font-bold text-slate-800 mb-8 text-center tracking-tight">
+            Future <span class="text-blue-600">Roadmap</span> & Scaling
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Phase 1 -->
+            <div class="bg-white p-8 rounded-2xl shadow-lg border-t-4 border-cyan-500 relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-4 opacity-10 text-6xl font-black text-cyan-200">01</div>
+                <h3 class="text-xl font-bold text-slate-800 mb-2">Phase 1: Post‑Prototype</h3>
+                <p class="text-xs font-semibold text-cyan-600 uppercase tracking-widest mb-4">0–3 Months</p>
+                <ul class="space-y-3 text-sm text-slate-600">
+                    <li class="flex items-start"><span class="text-cyan-500 mr-2">✓</span>Live integration with core
+                        banking systems</li>
+                    <li class="flex items-start"><span class="text-cyan-500 mr-2">✓</span>Real customer pilot testing
+                    </li>
+                    <li class="flex items-start"><span class="text-cyan-500 mr-2">✓</span>Model recalibration using live
+                        feedback</li>
+                    <li class="flex items-start"><span class="text-cyan-500 mr-2">✓</span>UI dashboard for risk managers
+                    </li>
+                    <li class="flex items-start"><span class="text-cyan-500 mr-2">✓</span>Intervention A/B testing
+                        engine</li>
+                </ul>
+                <div class="mt-6 pt-4 border-t border-slate-100 text-xs text-slate-500 italic">
+                    👉 Shows practicality & immediate rollout readiness.
+                </div>
+            </div>
+
+            <!-- Phase 2 -->
+            <div class="bg-white p-8 rounded-2xl shadow-lg border-t-4 border-blue-500 relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-4 opacity-10 text-6xl font-black text-blue-200">02</div>
+                <h3 class="text-xl font-bold text-slate-800 mb-2">Phase 2: Intelligence Expansion</h3>
+                <p class="text-xs font-semibold text-blue-600 uppercase tracking-widest mb-4">3–6 Months</p>
+                <ul class="space-y-3 text-sm text-slate-600">
+                    <li class="flex items-start"><span class="text-blue-500 mr-2">✓</span>Advanced deep learning
+                        (Temporal Transformers)</li>
+                    <li class="flex items-start"><span class="text-blue-500 mr-2">✓</span>Personalized financial
+                        recovery recommendations</li>
+                    <li class="flex items-start"><span class="text-blue-500 mr-2">✓</span>Behavioral nudging via app
+                        notifications</li>
+                    <li class="flex items-start"><span class="text-blue-500 mr-2">✓</span>Dynamic credit limits &
+                        Multi-product linking</li>
+                </ul>
+                <div class="mt-6 pt-4 border-t border-slate-100 text-xs text-slate-500 italic">
+                    👉 Shows innovation depth.
+                </div>
+            </div>
+
+            <!-- Phase 3 -->
+            <div class="bg-white p-8 rounded-2xl shadow-lg border-t-4 border-indigo-500 relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-4 opacity-10 text-6xl font-black text-indigo-200">03</div>
+                <h3 class="text-xl font-bold text-slate-800 mb-2">Phase 3: Enterprise‑Scale</h3>
+                <p class="text-xs font-semibold text-indigo-600 uppercase tracking-widest mb-4">6–12 Months</p>
+                <ul class="space-y-3 text-sm text-slate-600">
+                    <li class="flex items-start"><span class="text-indigo-500 mr-2">✓</span>Multi‑country regulatory
+                        adaptation</li>
+                    <li class="flex items-start"><span class="text-indigo-500 mr-2">✓</span>Cross‑bank consortium risk
+                        intelligence</li>
+                    <li class="flex items-start"><span class="text-indigo-500 mr-2">✓</span>Real‑time fraud +
+                        delinquency hybrid engine</li>
+                    <li class="flex items-start"><span class="text-indigo-500 mr-2">✓</span>Auto‑explainable regulator
+                        reporting module</li>
+                    <li class="flex items-start"><span class="text-indigo-500 mr-2">✓</span>AI fairness & bias audit
+                        dashboard</li>
+                </ul>
+                <div class="mt-6 pt-4 border-t border-slate-100 text-xs text-slate-500 italic">
+                    👉 This makes it look enterprise‑ready.
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

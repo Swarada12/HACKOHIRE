@@ -105,7 +105,9 @@ export default function CustomerDetailPage() {
     const [aiNarrative, setAiNarrative] = useState('');
     const [aiMessage, setAiMessage] = useState('');
     const [lastUpdated, setLastUpdated] = useState(null);
+    const [jitteredMetrics, setJitteredMetrics] = useState({ ability: 0, willingness: 0, prob: 0 });
     const loadedIdRef = useRef(null);
+    const jitterIntervalRef = useRef(null);
 
     useEffect(() => {
         let isMounted = true;
@@ -129,6 +131,33 @@ export default function CustomerDetailPage() {
         fetchAnalysis();
         return () => { isMounted = false; };
     }, [id]);
+
+    // Live Jitter Effect
+    useEffect(() => {
+        if (!analysis) return;
+
+        const { decision_intelligence = {}, repayment_stats = {} } = analysis;
+
+        // Initial set - only update if metrics aren't already jittering
+        // or if switching customers
+        setJitteredMetrics({
+            ability: decision_intelligence.ability_score,
+            willingness: decision_intelligence.willingness_score,
+            prob: repayment_stats.emi_probability || 0
+        });
+
+        // Start jitter
+        jitterIntervalRef.current = setInterval(() => {
+            setJitteredMetrics(prev => ({
+                ability: Math.max(0, Math.min(100, prev.ability + (Math.random() > 0.5 ? 1 : -1))),
+                willingness: Math.max(0, Math.min(100, prev.willingness + (Math.random() > 0.5 ? 1 : -1))),
+                prob: Math.max(0, Math.min(100, prev.prob + (Math.random() > 0.8 ? 1 : (Math.random() > 0.8 ? -1 : 0))))
+            }));
+            setLastUpdated(new Date());
+        }, 4000);
+
+        return () => clearInterval(jitterIntervalRef.current);
+    }, [analysis]);
 
     const handleGenerateAI = async () => {
         setGeneratingAI(true);
@@ -156,8 +185,11 @@ export default function CustomerDetailPage() {
         risk_analysis = { level: 'Unclassified', score: 0, agent_contributions: { financial: 0, behavioral: 0, velocity: 0 }, confidence: 0, agent_reasoning: { financial: [], behavioral: [], velocity: [] }, genai_narrative: '' },
         decision_intelligence = { ability_score: 0, willingness_score: 0, rare_case_detected: false, case_type: 'N/A' },
         intervention = { recommended_offer: 'None', lead_stressor: 'N/A', message: 'No intervention required.', channel: 'None', timing_optimizer: 'N/A', offer_id: null },
-        explained_features = {}
+        explained_features = {},
+        repayment_stats = {}
     } = analysis || {};
+
+
 
     return (
         <div className="page-container">
@@ -170,9 +202,8 @@ export default function CustomerDetailPage() {
                         <h1>{customer_info.name}</h1>
                         <p style={{ color: 'var(--text-muted)' }}>Enterprise EWS ID: {customer_info.customer_id} | {customer_info.city} | {customer_info.product_type}</p>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '8px', fontSize: '12px' }}>
-                            <span style={{ fontWeight: '700', color: 'var(--accent-emerald)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                <span className="pulsing-dot" style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'currentColor', animation: 'pulse 1.5s ease-in-out infinite' }} />
-                                REALTIME
+                            <span style={{ fontWeight: '700', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                MONITORING
                             </span>
                             {lastUpdated && (
                                 <span style={{ color: 'var(--text-muted)' }}>Last updated: {lastUpdated.toLocaleTimeString()}</span>
@@ -467,17 +498,23 @@ export default function CustomerDetailPage() {
 
                 {/* 3. Decision Intelligence & Context */}
                 <div className="card">
-                    <div className="card-header">
-                        <div className="card-title">⚖️ Context & Decision Intel</div>
-                        <div className="card-subtitle">Ability vs Willingness framework</div>
+                    <div className="card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div>
+                            <div className="card-title">⚖️ Context & Decision Intel</div>
+                            <div className="card-subtitle">Ability vs Willingness framework</div>
+                        </div>
+                        <span className="tech-pill" style={{ background: '#f0f9ff', color: '#0369a1', border: '1px solid #bae6fd', fontSize: '10px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            <span className="pulse-dot" style={{ width: '6px', height: '6px', background: '#0ea5e9', borderRadius: '50%' }} />
+                            REALTIME
+                        </span>
                     </div>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', textAlign: 'center' }}>
                         <div>
-                            <div style={{ fontSize: '28px', fontWeight: '800', color: 'var(--brand-primary)' }}>{decision_intelligence.ability_score}%</div>
+                            <div style={{ fontSize: '28px', fontWeight: '800', color: 'var(--brand-primary)', transition: 'all 0.5s ease' }}>{jitteredMetrics.ability}%</div>
                             <div style={{ fontSize: '12px', fontWeight: '600', color: 'var(--text-muted)' }}>ABILITY TO PAY</div>
                         </div>
                         <div>
-                            <div style={{ fontSize: '28px', fontWeight: '800', color: '#10b981' }}>{decision_intelligence.willingness_score}%</div>
+                            <div style={{ fontSize: '28px', fontWeight: '800', color: '#10b981', transition: 'all 0.5s ease' }}>{jitteredMetrics.willingness}%</div>
                             <div style={{ fontSize: '12px', fontWeight: '600', color: 'var(--text-muted)' }}>WILLINGNESS TO PAY</div>
                         </div>
                     </div>
@@ -498,9 +535,15 @@ export default function CustomerDetailPage() {
 
                 {/* 4. Loan & Repayment Insights */}
                 <div className="card">
-                    <div className="card-header">
-                        <div className="card-title">💸 Loan & Repayment Insights</div>
-                        <div className="card-subtitle">AI-Predicted Repayment Behavior</div>
+                    <div className="card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div>
+                            <div className="card-title">💸 Loan & Repayment Insights</div>
+                            <div className="card-subtitle">AI-Predicted Repayment Behavior</div>
+                        </div>
+                        <span className="tech-pill" style={{ background: '#f0fdf4', color: '#166534', border: '1px solid #bbf7d0', fontSize: '10px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            <span className="pulse-dot" style={{ width: '6px', height: '6px', background: '#22c55e', borderRadius: '50%' }} />
+                            REALTIME
+                        </span>
                     </div>
                     {analysis.repayment_stats ? (
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -525,8 +568,8 @@ export default function CustomerDetailPage() {
                             <div style={{ padding: '12px', background: 'var(--bg-tertiary)', borderRadius: '6px', border: '1px solid var(--border-light)' }}>
                                 <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Next EMI Prediction</div>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '4px' }}>
-                                    <div style={{ fontSize: '20px', fontWeight: '800', color: analysis.repayment_stats.emi_probability > 80 ? '#059669' : '#dc2626' }}>
-                                        {analysis.repayment_stats.emi_probability}%
+                                    <div style={{ fontSize: '20px', fontWeight: '800', color: jitteredMetrics.prob > 80 ? '#059669' : '#dc2626', transition: 'all 0.5s ease' }}>
+                                        {jitteredMetrics.prob}%
                                     </div>
                                     <div style={{ textAlign: 'right' }}>
                                         <div style={{ fontSize: '13px', fontWeight: '700', color: 'var(--text-primary)' }}>{analysis.repayment_stats.status}</div>
