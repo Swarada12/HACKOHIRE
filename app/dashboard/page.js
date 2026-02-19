@@ -7,27 +7,39 @@ import {
 } from 'recharts';
 import { getDashboardStats } from '../lib/api';
 import Link from 'next/link';
-
+import { useRealtimeDashboardStats } from '../context/RealtimeContext';
 import Loader from '../components/Loader';
 
 export default function DashboardPage() {
-    const [stats, setStats] = useState(null);
     const [loading, setLoading] = useState(true);
+    const { dashboardStats: liveStats, setDashboardStats } = useRealtimeDashboardStats();
+    const [fallbackStats, setFallbackStats] = useState(null);
 
     useEffect(() => {
-        async function fetchStats() {
-            setLoading(true);
-            const data = await getDashboardStats();
-            if (data) setStats(data);
+        let cancelled = false;
+        getDashboardStats().then((data) => {
+            if (cancelled) return;
+            if (data) {
+                setDashboardStats(data);
+                setFallbackStats(data);
+            }
             setLoading(false);
-        }
-        fetchStats();
-    }, []);
+        });
+        return () => { cancelled = true; };
+    }, [setDashboardStats]);
+
+    const stats = liveStats ?? fallbackStats;
 
     if (loading) return <Loader type="dashboard" text="Aggregating Enterprise Data..." />;
     if (!stats) return <div className="page-container"><div style={{ padding: '100px', textAlign: 'center', color: 'red' }}>Error: Could not fetch dashboard statistics. Please ensure the backend is running.</div></div>;
 
-    const { summary, riskDistribution, geoRisk, productHealth, riskTrend } = stats;
+    const {
+        summary = { totalCustomers: 0, criticalRisk: 0, interventionsTriggered: 0, activeAlerts: 0, costSavings: '₹0', lastUpdated: 'N/A' },
+        riskDistribution = [],
+        geoRisk = [],
+        productHealth = [],
+        riskTrend = []
+    } = stats || {};
 
     return (
         <div className="page-container">
@@ -39,7 +51,7 @@ export default function DashboardPage() {
                     </div>
                     <div style={{ textAlign: 'right' }}>
                         <div style={{ fontSize: '12px', fontWeight: '700', color: 'var(--accent-emerald)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                            <span className="pulsing-dot"></span> LIVE STREAM
+                            <span className="pulsing-dot"></span> REALTIME
                         </div>
                         <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Last Updated: {summary.lastUpdated}</div>
                     </div>
@@ -48,11 +60,11 @@ export default function DashboardPage() {
 
             {/* Metric Cards - Shifted to Ensemble Logic */}
             <div className="metrics-grid animate-stagger">
-                <MetricCard color="blue" icon="👥" label="Portfolio Registry" value={summary.totalCustomers.toLocaleString()} change="Enterprise" positive />
-                <MetricCard color="red" icon="🤖" label="Ensemble High-Risk" value={summary.criticalRisk} change="+5%" positive={false} />
-                <MetricCard color="purple" icon="🧠" label="Decision Interventions" value={summary.interventionsTriggered.toLocaleString()} change="Automated" positive />
-                <MetricCard color="amber" icon="🚨" label="Governance Alerts" value={summary.activeAlerts.toLocaleString()} change="Low Conf" positive={false} />
-                <MetricCard color="green" icon="💰" label="Est. Avoided Loss" value={summary.costSavings} change="Q1 Target" positive />
+                <MetricCard color="blue" icon="👥" label="Portfolio Registry" value={(summary.totalCustomers || 0).toLocaleString()} change="Enterprise" positive />
+                <MetricCard color="red" icon="🤖" label="Ensemble High-Risk" value={summary.criticalRisk || 0} change="+5%" positive={false} />
+                <MetricCard color="purple" icon="🧠" label="Decision Interventions" value={(summary.interventionsTriggered || 0).toLocaleString()} change="Automated" positive />
+                <MetricCard color="amber" icon="🚨" label="Governance Alerts" value={(summary.activeAlerts || 0).toLocaleString()} change="Low Conf" positive={false} />
+                <MetricCard color="green" icon="💰" label="Est. Avoided Loss" value={summary.costSavings || '₹0'} change="Q1 Target" positive />
             </div>
 
             <div className="charts-grid">

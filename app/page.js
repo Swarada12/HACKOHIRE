@@ -3,17 +3,22 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { getDashboardStats } from './lib/api';
+import { useRealtimeDashboardStats } from './context/RealtimeContext';
 
 export default function HomePage() {
-  const [stats, setStats] = useState(null);
+  const { dashboardStats: liveStats, setDashboardStats } = useRealtimeDashboardStats();
+  const [fallbackStats, setFallbackStats] = useState(null);
 
   useEffect(() => {
-    async function fetchStats() {
-      const data = await getDashboardStats();
-      if (data) setStats(data);
-    }
-    fetchStats();
-  }, []);
+    getDashboardStats().then((data) => {
+      if (data) {
+        setDashboardStats(data);
+        setFallbackStats(data);
+      }
+    });
+  }, [setDashboardStats]);
+
+  const stats = liveStats ?? fallbackStats;
 
   const features = [
     { icon: '🛰️', title: 'Multi-Source Telemetry', desc: 'Ingestion from Core Banking, App Activity, Payment History, and Salary Credit streams into a unified feature store.', color: '#dbeafe' },
@@ -65,11 +70,11 @@ export default function HomePage() {
           <div className="hero-stat-label">ML Architecture</div>
         </div>
         <div className="hero-stat">
-          <div className="hero-stat-value amber">{stats ? stats.summary.costSavings : <span style={{ fontSize: '18px', opacity: 0.7 }}>Loading...</span>}</div>
+          <div className="hero-stat-value amber">{stats?.summary ? stats.summary.costSavings : <span style={{ fontSize: '18px', opacity: 0.7 }}>Loading...</span>}</div>
           <div className="hero-stat-label">Estimated Avoided Loss</div>
         </div>
         <div className="hero-stat">
-          <div className="hero-stat-value purple">{stats ? stats.summary.totalCustomers.toLocaleString() : <span style={{ fontSize: '18px', opacity: 0.7 }}>Loading...</span>}</div>
+          <div className="hero-stat-value purple">{stats?.summary ? stats.summary.totalCustomers.toLocaleString() : <span style={{ fontSize: '18px', opacity: 0.7 }}>Loading...</span>}</div>
           <div className="hero-stat-label">Accounts Monitored</div>
         </div>
       </div>

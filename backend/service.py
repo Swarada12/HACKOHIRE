@@ -1,11 +1,14 @@
 import bentoml
+import asyncio
 import numpy as np
+import pandas as pd
 from datetime import datetime
 from dotenv import load_dotenv
 load_dotenv() # Load environment variables from .env BEFORE other imports
 from feature_store import FeatureStore
 from ml_engine import MLRiskEngine, RareCaseSolver
 from intervention_engine import InterventionEngine
+from genai import GenAI
 from typing import Dict, Any, List
 
 # Initialize Core Components
@@ -13,6 +16,7 @@ feature_store = FeatureStore()
 risk_engine = MLRiskEngine()
 context_solver = RareCaseSolver()
 intervention_engine = InterventionEngine()
+genai_engine = GenAI()
 
 from pydantic import BaseModel
 
@@ -34,6 +38,7 @@ class PatternInput(BaseModel):
 
 class CustomerListInput(BaseModel):
     risk_filter: str | None = "All"
+    search: str | None = ""
 
 class ExecuteInput(BaseModel):
     customer_id: str
@@ -44,7 +49,43 @@ class ExecuteInput(BaseModel):
     traffic={"timeout": 60}
 )
 class BankRiskService:
-    
+    def sync_pending_customers(self):
+        """
+        Just-In-Time (JIT) Sync:
+        Detects customers added manually to DB and runs AI inference.
+        """
+        conn = feature_store.get_conn()
+        try:
+            # Find users with NULL or 0 score (newly added via DB)
+            pending = pd.read_sql_query("SELECT customer_id FROM customers WHERE risk_score IS NULL OR risk_score <= 0", conn)
+            cids = pending['customer_id'].tolist()
+            
+            if not cids:
+                return
+
+            print(f"JIT Sync: Detected {len(cids)} new customers. Running AI Ensemble...")
+            cursor = conn.cursor()
+            for cid in cids:
+                detailed = feature_store.get_customer_detailed(cid)
+                if not detailed:
+                    continue
+                
+                features = detailed.get('features', {})
+                
+                # Run Ensemble
+                res = risk_engine.predict_ensemble(features)
+                score = int(res['fusion_score'])
+                level = "Critical" if score >= 85 else "High" if score >= 45 else "Medium" if score >= 30 else "Low"
+                
+                # Persist Real-Time
+                cursor.execute("UPDATE customers SET risk_score = ?, risk_level = ? WHERE customer_id = ?", (score, level, cid))
+            
+            conn.commit()
+        except Exception as e:
+            print(f"JIT Sync Error: {e}")
+        finally:
+            conn.close()
+
     @bentoml.api
     async def execute_intervention(self, input_data: ExecuteInput) -> Dict[str, Any]:
         """
@@ -60,10 +101,50 @@ class BankRiskService:
     @bentoml.api
     async def list_customers(self, input_data: CustomerListInput) -> Dict[str, Any]:
         """
-        Returns a sample of customers enriched with ensemble risk scores.
-        Supports server-side filtering by Risk Level.
+        Returns customers enriched with ML model-driven signals.
+        Runs predict_ensemble() per customer so signals come from the trained models.
         """
-        return feature_store.get_customers(limit=1000, risk_filter=input_data.risk_filter)
+        self.sync_pending_customers()
+        result = feature_store.get_customers(
+            limit=1000, 
+            risk_filter=input_data.risk_filter,
+            search=input_data.search
+        )
+
+        # Enrich each customer with ML model signals
+        for c in result.get("customers", []):
+            cid = c.get("customer_id")
+            if not cid:
+                continue
+            try:
+                detailed = feature_store.get_customer_detailed(cid)
+                if not detailed:
+                    continue
+                features = detailed.get("features", {})
+                ml = risk_engine.predict_ensemble(features, customer_id=cid)
+
+                # Extract model-driven signals from agent_reasoning
+                reasoning = ml.get("agent_reasoning", {})
+                model_signals = []
+                for domain, reasons in reasoning.items():
+                    for r in reasons:
+                        # Include both AI Flags and AI Insights, skip generic stable messages
+                        if ("Flag" in r or "Insight" in r) and "stable" not in r.lower() and "normal range" not in r.lower() and "acceptable" not in r.lower():
+                            model_signals.append(r)
+                
+                c["signals"] = model_signals
+
+                # Include agent scores so frontend can show model source
+                scores = ml.get("agent_scores", {})
+                c["agent_scores"] = {
+                    "xgboost": scores.get("xgboost_risk", 0),
+                    "lightgbm": scores.get("lightgbm_risk", 0),
+                    "lstm": scores.get("lstm_pattern", 0),
+                }
+            except Exception as e:
+                print(f"ML signal enrich error for {cid}: {e}")
+
+        return result
 
     @bentoml.api
     async def get_customer(self, input_data: RiskInput) -> Dict[str, Any]:
@@ -79,6 +160,7 @@ class BankRiskService:
         """
         Aggregated stats from the enterprise data lake.
         """
+        self.sync_pending_customers()
         return feature_store.get_dashboard_stats()
 
     @bentoml.api
@@ -134,10 +216,10 @@ class BankRiskService:
         core = detailed_data['core']
         
         # Multi-Agent ML
-        ml_result = risk_engine.predict_ensemble(features)
+        ml_result = risk_engine.predict_ensemble(features, customer_id=input_data.customer_id)
         
         # Decision Context
-        context = context_solver.resolve_context(features, ml_result)
+        context = context_solver.resolve_context(features, ml_result, customer_id=input_data.customer_id)
         
         # Unify Risk Thresholds: High >= 45, Critical >= 85
         score = ml_result['fusion_score']
@@ -147,8 +229,17 @@ class BankRiskService:
         # Interventions (Now aware of the final Unified Score)
         intervention = intervention_engine.generate_intervention(input_data.customer_id, features, ml_result, context, display_score)
         
+        # GenAI PERSONALIZATION (Model-to-Human Bridge) - MOVED TO ON-DEMAND ENDPOINT
+        # Returning placeholders to save latency/tokens
         risk_level = "Critical" if display_score >= 85 else "High" if display_score >= 45 else "Medium" if display_score >= 30 else "Low"
+        genai_narrative = "" # Placeholder
+        intervention['message'] = intervention.get('message', "Click 'Generate AI Insights' to synthesize personalized intervention.")
+            
+        print(f"DEBUG: genai_narrative produced: {len(genai_narrative) if genai_narrative else 0} chars")
+        if not genai_narrative:
+             print(f"WARNING: Narrative empty for {core.get('name')}")
 
+        agent_scores = ml_result.get('agent_scores', {})
         return {
             "customer_info": core,
             "risk_analysis": {
@@ -156,14 +247,69 @@ class BankRiskService:
                 "fusion_score": score,
                 "legacy_score": legacy_score,
                 "level": risk_level,
-                "confidence": ml_result['confidence_score'],
-                "agent_contributions": ml_result['agent_scores'],
-                "agent_reasoning": ml_result['agent_reasoning']
+                "confidence": ml_result.get('confidence_score', 0.75),
+                "agent_contributions": {
+                    "financial": agent_scores.get('xgboost_risk', 0),
+                    "behavioral": agent_scores.get('lightgbm_risk', 0),
+                    "velocity": agent_scores.get('lstm_pattern', 0)
+                },
+                "agent_reasoning": ml_result.get('agent_reasoning', {}),
+                "genai_narrative": genai_narrative
             },
             "decision_intelligence": context,
             "intervention": intervention,
             "repayment_stats": detailed_data.get('repayment_stats', {}),
             "explained_features": {k: v for i, (k, v) in enumerate(features.items()) if i < 50}
+        }
+
+    @bentoml.api
+    async def generate_ai_insights(self, input_data: RiskInput) -> Dict[str, Any]:
+        """
+        On-Demand GenAI Insight Generation.
+        Only called when the user clicks the "Generate AI Insights" button.
+        """
+        if not input_data.customer_id:
+            return {"error": "customer_id required"}
+            
+        detailed_data = feature_store.get_customer_detailed(input_data.customer_id)
+        if not detailed_data:
+            return {"error": "Customer not found"}
+        
+        features = detailed_data['features']
+        core = detailed_data['core']
+        
+        # Re-run Ensemble for fresh insights (or could cache, but this is cleaner)
+        ml_result = risk_engine.predict_ensemble(features, customer_id=input_data.customer_id)
+        context = context_solver.resolve_context(features, ml_result, customer_id=input_data.customer_id)
+        
+        score = ml_result['fusion_score']
+        legacy_score = detailed_data.get('legacy_score', 0)
+        display_score = max(score, legacy_score)
+        risk_level = "Critical" if display_score >= 85 else "High" if display_score >= 45 else "Medium" if display_score >= 30 else "Low"
+        
+        intervention = intervention_engine.generate_intervention(input_data.customer_id, features, ml_result, context, display_score)
+        
+        shap_factors = ml_result.get('shap_explanation', [])
+        top_factors = [{"feature": f['feature'].replace('_', ' ').title(), "value": f['value']} for f in shap_factors[:5]]
+        
+        # Prepare parallel tasks
+        narrative_task = asyncio.to_thread(genai_engine.explain_risk, display_score, risk_level, top_factors, core.get('name', 'Customer'))
+        
+        genai_context = {
+            "name": core.get('name', 'Customer'),
+            "risk_score": display_score,
+            "spending_gap": intervention.get('spending_gap', 5000), 
+            "offer": intervention.get('recommended_offer', 'Financial Advisory'),
+            "shap_explanation": shap_factors 
+        }
+        intervention_task = asyncio.to_thread(genai_engine.generate_intervention, genai_context)
+        
+        # Execute in parallel
+        genai_narrative, genai_msg = await asyncio.gather(narrative_task, intervention_task)
+        
+        return {
+            "genai_narrative": genai_narrative,
+            "personalized_message": genai_msg
         }
 # Restarting...
 

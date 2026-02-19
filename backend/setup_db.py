@@ -107,32 +107,55 @@ def seed_data(conn):
     customers = []
     for i in range(100001, 100301):
         cid = f"CUSR-{i}"
-        # Seed based on i to ensure the same customer ID always gets the same name across runs
         np.random.seed(i)
         name = f"{np.random.choice(first_names)} {np.random.choice(last_names)}"
         
-        # Reset seed for general data generation consistency
-        np.random.seed(i)
-        city = np.random.choice(cities)
-        prod = np.random.choice(products)
-        income = np.random.randint(500000, 2500000)
-        salary = income / 12
-        credit = np.random.randint(400, 850)
-        util = np.random.uniform(10, 95)
-        savings_change = np.random.uniform(-50, 20)
-        delay = np.random.randint(0, 25)
-        loan_amt = np.random.randint(100000, 2000000)
-        emi = loan_amt / np.random.choice([12, 24, 36, 60])
+        city = str(np.random.choice(cities))
+        prod = str(np.random.choice(products))
         
-        # Initial score for seed
-        score = int(round(15 + (delay * 2) + (util * 0.3)))
+        income = int(np.random.randint(500000, 2500000))
+        salary = float(income / 12)
+        credit = int(np.random.randint(400, 850))
+        
+        # Risk Persona Distribution - RANDOMIZED
+        persona_roll = int(np.random.randint(0, 10))
+        
+        if persona_roll == 0: # Persona 1: Liquidity Crunch
+            delay = int(np.random.randint(10, 25))
+            util = float(np.random.uniform(10, 30))
+            savings_change = float(np.random.uniform(-10, 5))
+        elif persona_roll == 1: # Persona 2: Over-Leverage
+            util = float(np.random.uniform(88, 99))
+            delay = int(np.random.randint(0, 5))
+            savings_change = float(np.random.uniform(-15, -5))
+        elif persona_roll == 2: # Persona 3: Behavioral Drift
+            savings_change = float(np.random.uniform(-30, -15))
+            util = float(np.random.uniform(40, 70))
+            delay = int(np.random.randint(0, 5))
+        elif persona_roll == 3: # Persona 4: Cash Flow Failure
+            savings_change = float(np.random.uniform(-55, -35))
+            delay = int(np.random.randint(0, 5))
+            util = float(np.random.uniform(50, 80))
+        else: # Safe
+            delay = int(np.random.randint(0, 3))
+            util = float(np.random.uniform(10, 45))
+            savings_change = float(np.random.uniform(2, 12))
+
+        # Initial legacy score - BALANCED & NORMALIZED (0-100)
+        score = int(min(100, round(5 + (delay * 2.5) + (util * 0.4) + (abs(min(0, savings_change)) * 0.8))))
+        
+        # Ensure personas can reach Critical (85+)
+        if persona_roll == 1 and util > 95: score = max(score, 87)
+        if persona_roll == 3 and savings_change < -45: score = max(score, 88)
+        
         lvl = 'Critical' if score >= 85 else 'High' if score >= 45 else 'Medium' if score >= 30 else 'Low'
         
-        # Strategic Decision Indices (Persistence)
-        ability = np.random.randint(20, 95)
-        willingness = np.random.randint(30, 98)
+        ability = int(np.random.randint(20, 95))
+        willingness = int(np.random.randint(30, 98))
         
-        # Profile-specific overrides
+        loan_amt = float(np.random.randint(100000, 2000000))
+        emi = float(loan_amt / np.random.choice([12, 24, 36, 60]))
+        
         if score > 70:
             ability = np.random.randint(15, 50) 
             if np.random.random() > 0.5:
@@ -143,11 +166,10 @@ def seed_data(conn):
         if ability < 40 and willingness > 70: rare_type = "Victim of Circumstance"
         elif ability > 60 and willingness < 40: rare_type = "Strategic Defaulter"
 
-        # Suggested Action Logic (Duplicate from FeatureStore for seeding)
         action = "Standard Monitoring"
-        if delay > 20: action = f"🚨 CRITICAL: Send Legal Notice to {name}"
-        elif delay > 7: action = f"📞 Call {name}: Offer Salary Advance"
-        elif util > 80: action = f"🔒 Freeze Card Limit ({int(util)}%)"
+        if delay > 15: action = f"📞 Call {name}: Salary Delay Relief"
+        elif util > 85: action = f"🔒 Shield: Limit Cap at {int(util)}%"
+        elif savings_change < -30: action = f"🛡️ Wellness: Savings Protection"
 
         customers.append((cid, name, city, prod, income, salary, credit, util, savings_change, delay, loan_amt, emi, score, lvl, action, ability, willingness, rare_type))
 
@@ -175,35 +197,35 @@ def seed_data(conn):
             
         # Transactions (Last 30 days)
         for d in range(1, 31):
-            date = datetime.now() - timedelta(days=d)
+            date = (datetime.now() - timedelta(days=d)).isoformat()
             # Regular spends
-            all_transactions.append((cid, date, np.random.randint(500, 5000), 'Grocery', 'Store', 'DEBIT'))
+            all_transactions.append((cid, date, float(np.random.randint(500, 5000)), 'Grocery', 'Store', 'DEBIT'))
             
             # Distress Signals
             if score > 60:
                 if np.random.random() > 0.8:
-                    all_transactions.append((cid, date, np.random.randint(1000, 10000), 'Gambling', 'WinBet', 'DEBIT'))
+                    all_transactions.append((cid, date, float(np.random.randint(1000, 10000)), 'Gambling', 'WinBet', 'DEBIT'))
                 if np.random.random() > 0.9:
-                    all_transactions.append((cid, date, 5000, 'Lending App', 'QuickCash', 'DEBIT'))
+                    all_transactions.append((cid, date, 5000.0, 'Lending App', 'QuickCash', 'DEBIT'))
             
             # EMI Payment
             if d == 15:
                 # Signal: EMI Bounce
                 if score > 80 and np.random.random() > 0.7:
-                     all_transactions.append((cid, date, 0, 'EMI', 'Bank', 'EMI_BOUNCE'))
+                     all_transactions.append((cid, date, 0.0, 'EMI', 'Bank', 'EMI_BOUNCE'))
                 else:
-                     all_transactions.append((cid, date, emi, 'EMI', 'Bank', 'DEBIT'))
+                     all_transactions.append((cid, date, float(emi), 'EMI', 'Bank', 'DEBIT'))
 
         # Utility Payments (Last 3 months)
         for m in range(1, 4):
-            bill_date = datetime.now() - timedelta(days=30*m)
+            bill_date_dt = datetime.now() - timedelta(days=30*m)
             # High risk users pay late
             days_late = np.random.randint(0, 5)
             if score > 60: days_late = np.random.randint(5, 20)
             
-            pay_date = bill_date + timedelta(days=days_late)
+            pay_date_dt = bill_date_dt + timedelta(days=days_late)
             amt = np.random.randint(800, 3000)
-            all_utility_bills.append((cid, bill_date, pay_date, amt, 'Electricity', days_late))
+            all_utility_bills.append((cid, bill_date_dt.isoformat(), pay_date_dt.isoformat(), amt, 'Electricity', days_late))
 
         # Activity
         for _ in range(np.random.randint(5, 50)):
@@ -212,7 +234,7 @@ def seed_data(conn):
             # Signal 9: Late night logins
             if score > 75 and np.random.random() > 0.7:
                 ts = ts.replace(hour=np.random.randint(1, 4))
-            all_activity.append((cid, ts, action, 'Android'))
+            all_activity.append((cid, ts.isoformat(), action, 'Android'))
 
     cursor.executemany('INSERT INTO transactions (customer_id, timestamp, amount, category, merchant, transaction_type) VALUES (?,?,?,?,?,?)', all_transactions)
     cursor.executemany('INSERT INTO salary_history (customer_id, month_year, amount, delay_days, employer) VALUES (?,?,?,?,?)', all_salaries)

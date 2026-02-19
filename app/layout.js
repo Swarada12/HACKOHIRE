@@ -1,5 +1,6 @@
 import './globals.css';
 import Sidebar from './components/Sidebar';
+import { RealtimeProvider } from './context/RealtimeContext';
 
 export const metadata = {
   title: 'Praeventix EWS — Early Warning System',
@@ -10,12 +11,14 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <div className="app-layout">
-          <Sidebar />
-          <main className="main-content">
-            {children}
-          </main>
-        </div>
+        <RealtimeProvider>
+          <div className="app-layout">
+            <Sidebar />
+            <main className="main-content">
+              {children}
+            </main>
+          </div>
+        </RealtimeProvider>
       </body>
     </html>
   );

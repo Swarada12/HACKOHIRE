@@ -45,12 +45,12 @@ export async function analyzePattern(transactions) {
     }
 }
 
-export async function getCustomers(filter = "All") {
+export async function getCustomers(filter = "All", search = "") {
     try {
         const res = await fetch('/api/ml/list_customers', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ input_data: { risk_filter: filter } })
+            body: JSON.stringify({ input_data: { risk_filter: filter, search: search } })
         });
         if (!res.ok) throw new Error('Failed to fetch customers');
         return await res.json();
@@ -86,6 +86,21 @@ export async function analyzeCustomerRisk(customerId) {
         return await res.json();
     } catch (err) {
         console.error('Error analyzing customer risk:', err);
+        return null;
+    }
+}
+
+export async function generateAIInsights(customerId) {
+    try {
+        const res = await fetch('/api/ml/generate_ai_insights', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ input_data: { customer_id: customerId } })
+        });
+        if (!res.ok) throw new Error('Failed to generate AI insights');
+        return await res.json();
+    } catch (err) {
+        console.error("API Error generateAIInsights:", err);
         return null;
     }
 }

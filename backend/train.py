@@ -16,31 +16,67 @@ print("Generating synthetic banking data...")
 def generate_risk_data(n=5000):
     np.random.seed(42)
     
-    # Safe customers
-    n_safe = int(n * 0.85)
+    # Safe customers (80%)
+    n_safe = int(n * 0.80)
     safe = pd.DataFrame({
-        'salary_delay_days': np.random.exponential(1, n_safe), # Mostly 0-2 days
-        'savings_change_pct': np.random.normal(5, 10, n_safe), # Slight increase/stable
-        'credit_utilization': np.random.beta(2, 5, n_safe) * 100, # Lower util
-        'failed_debits': np.random.poisson(0.1, n_safe), # Very rare
-        'lending_app_txns': np.random.poisson(0.05, n_safe), # Rare
-        'gambling_amt': np.random.exponential(100, n_safe), # Low
+        'salary_delay_days': np.random.exponential(0.5, n_safe), 
+        'savings_change_pct': np.random.normal(10, 5, n_safe), 
+        'credit_utilization': np.random.beta(2, 8, n_safe) * 100,
+        'failed_debits': np.random.poisson(0.05, n_safe),
+        'lending_app_txns': np.random.poisson(0.05, n_safe),
+        'gambling_amt': np.random.exponential(50, n_safe),
         'target': 0
     })
     
-    # Risky customers
+    # Risky customers (20%) - Divided into 4 Personas
     n_risky = n - n_safe
-    risky = pd.DataFrame({
-        'salary_delay_days': np.random.gamma(5, 2, n_risky), # Avg 10 days delay
-        'savings_change_pct': np.random.normal(-30, 20, n_risky), # Large drop
-        'credit_utilization': np.random.beta(5, 2, n_risky) * 100, # High util
-        'failed_debits': np.random.poisson(1.5, n_risky), # Occasional failures
-        'lending_app_txns': np.random.poisson(2, n_risky), # Frequent
-        'gambling_amt': np.random.exponential(5000, n_risky), # Higher
+    n_per = n_risky // 4
+    
+    # Persona 1: Liquidity Crunch (Salary Delay focus)
+    p1 = pd.DataFrame({
+        'salary_delay_days': np.random.gamma(8, 2, n_per), # High delay
+        'savings_change_pct': np.random.normal(-5, 5, n_per),
+        'credit_utilization': np.random.beta(2, 5, n_per) * 100,
+        'failed_debits': np.random.poisson(0.2, n_per),
+        'lending_app_txns': np.random.poisson(0.1, n_per),
+        'gambling_amt': np.random.exponential(100, n_per),
         'target': 1
     })
     
-    df = pd.concat([safe, risky]).sample(frac=1).reset_index(drop=True)
+    # Persona 2: Over-Leverage (Credit Util focus)
+    p2 = pd.DataFrame({
+        'salary_delay_days': np.random.exponential(1, n_per),
+        'savings_change_pct': np.random.normal(-10, 10, n_per),
+        'credit_utilization': np.random.uniform(85, 98, n_per), # Maxed out
+        'failed_debits': np.random.poisson(0.5, n_per),
+        'lending_app_txns': np.random.poisson(0.5, n_per),
+        'gambling_amt': np.random.exponential(200, n_per),
+        'target': 1
+    })
+    
+    # Persona 3: Behavioral Drift (Gambling/Apps focus)
+    p3 = pd.DataFrame({
+        'salary_delay_days': np.random.exponential(1, n_per),
+        'savings_change_pct': np.random.normal(-5, 10, n_per),
+        'credit_utilization': np.random.beta(3, 3, n_per) * 100,
+        'failed_debits': np.random.poisson(0.2, n_per),
+        'lending_app_txns': np.random.poisson(5, n_per), # High loan apps
+        'gambling_amt': np.random.uniform(10000, 50000, n_per), # High gambling
+        'target': 1
+    })
+    
+    # Persona 4: Cash Flow Failure (Bounces/Savings drop)
+    p4 = pd.DataFrame({
+        'salary_delay_days': np.random.exponential(1, n_per),
+        'savings_change_pct': np.random.normal(-45, 15, n_per), # Massive dump
+        'credit_utilization': np.random.beta(4, 4, n_per) * 100,
+        'failed_debits': np.random.poisson(4, n_per), # Continuous bounces
+        'lending_app_txns': np.random.poisson(1, n_per),
+        'gambling_amt': np.random.exponential(100, n_per),
+        'target': 1
+    })
+    
+    df = pd.concat([safe, p1, p2, p3, p4]).sample(frac=1).reset_index(drop=True)
     return df
 
 df = generate_risk_data()
@@ -120,18 +156,20 @@ class LSTMPredictor(nn.Module):
         out = self.fc(last_step)
         return self.sigmoid(out)
 
-# Mock training for simplicity - we just save an initialized model structure
-# In a real scenario, we'd train this on millions of sequences
+# Mock training for simplicity
 pattern_model = LSTMPredictor()
-pattern_model.eval() # Set to eval mode
+pattern_model.eval()
 
-# Create a sample input to define signature
-dummy_input = torch.randn(1, 14, 1) # Batch 1, Sequence 14, Feature 1 (Amount)
+# Create a sample input for tracing
+dummy_input = torch.randn(1, 14, 1)
 
-print("Saving LSTM model to BentoML...")
-bentoml.pytorch.save_model(
+# Use TorchScript for better portability in BentoML
+traced_model = torch.jit.trace(pattern_model, dummy_input)
+
+print("Saving LSTM (TorchScript) model to BentoML...")
+bentoml.torchscript.save_model(
     "bank_pattern_lstm",
-    pattern_model,
+    traced_model,
     signatures={"__call__": {"batchable": True}}
 )
 print("Saved: bank_pattern_lstm")

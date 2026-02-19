@@ -2,39 +2,37 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useMemo, useState, useEffect } from 'react';
+import { useRealtimeDashboardStats } from '../context/RealtimeContext';
 import { getDashboardStats } from '../lib/api';
 
 export default function Sidebar() {
     const pathname = usePathname();
-    const [stats, setStats] = useState({ critical: 0, high: 0 });
+    const { dashboardStats, setDashboardStats } = useRealtimeDashboardStats();
+    const [initialized, setInitialized] = useState(false);
 
     useEffect(() => {
-        async function fetchStats() {
-            try {
-                const data = await getDashboardStats();
-                if (data && data.summary) {
-                    // Find High Risk count from distribution
-                    const highRisk = data.riskDistribution?.find(d => d.name === 'High')?.value || 0;
-                    setStats({
-                        critical: data.summary.criticalRisk,
-                        high: highRisk // Use raw High Risk count for Pending
-                    });
-                }
-            } catch (e) {
-                console.error("Sidebar Stats Error", e);
-            }
-        }
-        fetchStats();
-        const interval = setInterval(fetchStats, 30000); // Poll every 30s
-        return () => clearInterval(interval);
-    }, []);
+        if (initialized) return;
+        getDashboardStats().then((data) => {
+            if (data) setDashboardStats(data);
+            setInitialized(true);
+        });
+    }, [initialized, setDashboardStats]);
+
+    const stats = useMemo(() => {
+        if (!dashboardStats?.summary) return { critical: 0, high: 0 };
+        const highRisk = dashboardStats.riskDistribution?.find(d => d.name === 'High')?.value ?? 0;
+        return {
+            critical: dashboardStats.summary.criticalRisk ?? 0,
+            high: highRisk,
+        };
+    }, [dashboardStats]);
 
     const navItems = [
         {
             section: 'Overview',
             items: [
-                { href: '/', label: 'Overview', icon: HomeIcon },
+                { href: '/', label: 'Landing Page', icon: HomeIcon },
                 { href: '/dashboard', label: 'Enterprise Dashboard', icon: DashboardIcon },
             ]
         },

@@ -3,13 +3,12 @@
 import { useState, useMemo, useEffect } from 'react';
 import { getCustomers } from '../lib/api';
 import Link from 'next/link';
-
 import Loader from '../components/Loader';
 
 export default function CustomersPage() {
     const [customers, setCustomers] = useState([]);
     const [totalCount, setTotalCount] = useState(0);
-    const [stats, setStats] = useState({ total: 0, critical: 0, high: 0, low: 0 });
+    const [stats, setStats] = useState({ total: 0, critical: 0, high: 0, medium: 0, low: 0 });
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
     const [filter, setFilter] = useState('All');
@@ -23,24 +22,19 @@ export default function CustomersPage() {
 
             const mapped = (data || []).map(c => {
                 const delay = c.current_salary_delay_days || 0;
-                const util = c.credit_utilization || 0;
-                const savings = c.savings_change_pct || 0;
 
-                let sigs = c.signals || [];
-                if (sigs.length === 0) {
-                    if (delay > 0) sigs.push(`Salary Delay (${delay}d)`);
-                    if (util > 80) sigs.push(`High Util (${Math.round(util)}%)`);
-                    if (savings < -20) sigs.push(`Balance Drop (${Math.round(savings)}%)`);
-                }
+                // Signals now come from the ML model's agent_reasoning
+                const sigs = c.signals || [];
 
                 return {
                     id: c.customer_id,
                     name: c.name,
                     productType: c.product_type || (c.loan_amount > 1000000 ? 'Home Loan' : 'Personal Loan'),
                     city: c.city || 'Mumbai',
-                    riskScore: Math.round(c.risk_score),
-                    riskLevel: c.risk_level,
+                    riskScore: Math.round(c.risk_score || 0),
+                    riskLevel: c.risk_level || 'Unclassified',
                     signals: sigs,
+                    agentScores: c.agent_scores || null,
                     riskTrend: delay > 5 ? 'increasing' : 'stable',
                     lastActivity: '⚡ LIVE'
                 };
@@ -53,6 +47,7 @@ export default function CustomersPage() {
                     total: response.stats.total,
                     critical: response.stats.critical,
                     high: response.stats.high,
+                    medium: response.stats.medium,
                     low: response.stats.low
                 });
             }
@@ -65,9 +60,9 @@ export default function CustomersPage() {
     const filtered = useMemo(() => {
         return customers.filter(c => {
             const matchesSearch = !search ||
-                c.name.toLowerCase().includes(search.toLowerCase()) ||
-                c.id.toLowerCase().includes(search.toLowerCase()) ||
-                c.city.toLowerCase().includes(search.toLowerCase());
+                (c.name || "").toLowerCase().includes(search.toLowerCase()) ||
+                (c.id || "").toLowerCase().includes(search.toLowerCase()) ||
+                (c.city || "").toLowerCase().includes(search.toLowerCase());
             return matchesSearch;
         });
     }, [search, customers]);
@@ -94,22 +89,30 @@ export default function CustomersPage() {
                 }} onClick={() => setInspectSignals(null)}>
                     <div style={{
                         backgroundColor: 'white', padding: '24px', borderRadius: '12px',
-                        width: '320px', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
+                        width: '380px', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
                         border: '1px solid var(--border-light)'
                     }} onClick={e => e.stopPropagation()}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                            <h3 style={{ margin: 0, fontSize: '16px', fontWeight: '800' }}>Active Indicators</h3>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                            <h3 style={{ margin: 0, fontSize: '16px', fontWeight: '800' }}>🧠 ML Model Signals</h3>
                             <button onClick={() => setInspectSignals(null)} style={{ border: 'none', background: 'none', cursor: 'pointer', fontSize: '18px' }}>✕</button>
+                        </div>
+                        <div style={{ marginBottom: '12px', padding: '8px 12px', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '6px', fontSize: '11px', color: '#166534', fontWeight: '600' }}>
+                            Source: XGBoost + LightGBM + LSTM Ensemble
                         </div>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                             {inspectSignals.map((s, i) => (
                                 <div key={i} style={{
                                     padding: '10px', background: '#fef2f2', border: '1px solid #fee2e2',
-                                    borderRadius: '6px', color: '#991b1b', fontSize: '13px', fontWeight: '700'
+                                    borderRadius: '6px', color: '#991b1b', fontSize: '12px', fontWeight: '600'
                                 }}>
-                                    🚩 {s}
+                                    🤖 {s}
                                 </div>
                             ))}
+                            {inspectSignals.length === 0 && (
+                                <div style={{ padding: '10px', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '6px', color: '#166534', fontSize: '12px', fontWeight: '600' }}>
+                                    ✅ All models indicate stable profile
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -125,6 +128,7 @@ export default function CustomersPage() {
                     { label: 'Total Monitored', value: stats.total.toLocaleString(), color: 'blue', icon: '👥' },
                     { label: 'Critical', value: stats.critical.toLocaleString(), color: 'red', icon: '🚨' },
                     { label: 'High Risk', value: stats.high.toLocaleString(), color: 'amber', icon: '⚠️' },
+                    { label: 'Medium Risk', value: stats.medium.toLocaleString(), color: 'orange', icon: '📊' },
                     { label: 'Low Risk', value: stats.low.toLocaleString(), color: 'green', icon: '✅' },
                 ].map((s, i) => (
                     <div key={i} className={`metric-card ${s.color}`}>
@@ -194,9 +198,9 @@ export default function CustomersPage() {
                                         </div>
                                     </td>
                                     <td>
-                                        <span className={`risk-badge ${c.riskLevel.toLowerCase()}`}>
+                                        <span className={`risk-badge ${(c.riskLevel || 'unclassified').toLowerCase()}`}>
                                             <span className="risk-dot" />
-                                            {c.riskLevel}
+                                            {c.riskLevel || 'Unclassified'}
                                         </span>
                                     </td>
                                     <td>

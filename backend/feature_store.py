@@ -32,9 +32,15 @@ class FeatureStore:
         """
         Unified scoring logic based on core banking fields (Legacy Compatible).
         """
-        delay = int(row.get('current_salary_delay_days', 0))
-        util = float(row.get('credit_utilization', 0))
-        savings_change = float(row.get('savings_change_pct', 0))
+        def get_safe(key, dtype=float, default=0.0):
+            val = row.get(key)
+            if val is None: return default
+            try: return dtype(val)
+            except: return default
+
+        delay = get_safe('current_salary_delay_days', int)
+        util = get_safe('credit_utilization')
+        savings_change = get_safe('savings_change_pct')
         
         score = 15
         if delay > 3: score += 20
@@ -81,15 +87,23 @@ class FeatureStore:
 
             f = {}
             f['name'] = core.get('name', 'Customer')
+            
+            # Helper for safe float conversion
+            def safe_f(val, default=0.0):
+                try:
+                    if val is None: return default
+                    return float(val)
+                except: return default
+
             # Base Features
-            f['f_annual_income'] = float(core['annual_income'])
-            f['f_monthly_salary'] = float(core['monthly_salary'])
-            f['f_credit_score'] = float(core['credit_score'])
-            f['f_credit_utilization'] = float(core['credit_utilization'])
-            f['f_savings_change_pct'] = float(core['savings_change_pct'])
-            f['f_loan_amount'] = float(core['loan_amount'])
-            f['f_monthly_emi'] = float(core['monthly_emi'])
-            f['t_current_salary_delay'] = float(core.get('current_salary_delay_days', 0))
+            f['f_annual_income'] = safe_f(core.get('annual_income'))
+            f['f_monthly_salary'] = safe_f(core.get('monthly_salary'), 50000.0)
+            f['f_credit_score'] = safe_f(core.get('credit_score'), 750.0)
+            f['f_credit_utilization'] = safe_f(core.get('credit_utilization'))
+            f['f_savings_change_pct'] = safe_f(core.get('savings_change_pct'))
+            f['f_loan_amount'] = safe_f(core.get('loan_amount'))
+            f['f_monthly_emi'] = safe_f(core.get('monthly_emi'))
+            f['t_current_salary_delay'] = safe_f(core.get('current_salary_delay_days'))
             
             # Persistent Strategy Indices (from DB)
             f['f_db_ability'] = core.get('ability_score')
@@ -101,7 +115,7 @@ class FeatureStore:
             # 1. SDI (Salary Delay Index)
             if not salary_df.empty:
                 avg_delay = salary_df['delay_days'].mean()
-                current_delay = core['current_salary_delay_days']
+                current_delay = f['t_current_salary_delay']
                 f['sdi_index'] = round(current_delay / (avg_delay + 1), 2)
             else:
                 f['sdi_index'] = 1.0
@@ -182,17 +196,7 @@ class FeatureStore:
                 "status": "On Track" if prob > 70 else "At Risk"
             }
 
-            # SYNERGY INJECTION: Ensure ML Agents have data if Legacy Score is High
-            # This ensures the "Multi-Agent Brain" agrees with the Enterprise Risk Level
-            legacy_score = core.get('risk_score', 0)
-            if legacy_score > 70 and f['sdi_index'] < 1.5:
-                # Inject a synthetic delay signal for the ML engine to chew on
-                f['t_current_salary_delay'] = max(f.get('t_current_salary_delay', 0), 12)
-                f['sdi_index'] = 2.5
-                f['f_credit_utilization'] = max(f['f_credit_utilization'], 88)
-            elif legacy_score > 40 and f['f_credit_utilization'] < 50:
-                f['f_credit_utilization'] = 72
-                f['f_dti_ratio'] = 0.45
+            legacy_score = core.get('risk_score') or 0
 
             return {
                 "core": core,
@@ -203,44 +207,43 @@ class FeatureStore:
         finally:
             conn.close()
 
-    def get_customers(self, limit: int = 100, risk_filter: str = "All") -> dict:
+    def get_customers(self, limit: int = 100, risk_filter: str = "All", search: str = "") -> dict:
+        # Production-Grade Input Hardening
+        risk_filter = risk_filter if isinstance(risk_filter, str) else "All"
+        search = search if isinstance(search, str) else ""
+        search = search.lower()
+        
         conn = self.get_conn()
         try:
-            # Enhanced Query with Sub-selects for Advanced Signals
+            # 1. Parameterized Query (SQL Injection Prevention)
             query = """
                 SELECT c.*, 
                 (SELECT COUNT(*) FROM transactions t WHERE t.customer_id = c.customer_id AND t.transaction_type = 'EMI_BOUNCE') as bounce_count,
                 (SELECT AVG(days_past_due) FROM utility_payments u WHERE u.customer_id = c.customer_id) as avg_utility_delay
                 FROM customers c
             """
+            params = []
             
-            if risk_filter != "All":
-                query += f" WHERE risk_level = '{risk_filter}'"
-            query += f" LIMIT {limit}"
+            if risk_filter and risk_filter != "All":
+                query += " WHERE risk_level = ?"
+                params.append(risk_filter)
             
-            df = pd.read_sql_query(query, conn)
+            query += " LIMIT ?"
+            params.append(limit)
+            
+            df = pd.read_sql_query(query, conn, params=params)
             
             # Enrich with signal labels for UI count
             customers = []
             for _, row in df.iterrows():
                 c = row.to_dict()
-                sigs = []
-                if c.get('current_salary_delay_days', 0) > 0: 
-                    sigs.append(f"Salary Delay ({c['current_salary_delay_days']}d)")
-                if c.get('credit_utilization', 0) > 80: 
-                    sigs.append(f"High Util ({int(c['credit_utilization'])}%)")
-                if c.get('savings_change_pct', 0) < -20: 
-                    sigs.append(f"Balance Drop ({int(c['savings_change_pct'])}%)")
-                
-                # New Advanced Signals
-                if c.get('bounce_count', 0) > 0:
-                    sigs.append(f"EMI Bounce ({int(c['bounce_count'])}x)")
-                
-                util_delay = c.get('avg_utility_delay')
-                if util_delay and util_delay > 7:
-                    sigs.append(f"Bill Lag ({int(util_delay)}d)")
-                
-                c['signals'] = sigs
+                # Signals are populated by ML model in service.py list_customers
+                c['signals'] = []
+                # Search Filter
+                name = (str(c.get('name')) if c.get('name') is not None else "").lower()
+                if search and search not in name:
+                    continue
+
                 customers.append(c)
             
             # Summary stats
@@ -249,7 +252,10 @@ class FeatureStore:
             
             stat_dict = {"total": int(total), "critical": 0, "high": 0, "medium": 0, "low": 0}
             for _, s in stats.iterrows():
-                stat_dict[s['risk_level'].lower()] = int(s['count'])
+                level = s['risk_level']
+                level_str = (str(level) if level is not None else "").lower()
+                if level_str in stat_dict:
+                    stat_dict[level_str] = int(s['count'])
 
             return {"customers": customers, "total": int(total), "stats": stat_dict}
         finally:
@@ -277,16 +283,24 @@ class FeatureStore:
             risk_dist = []
             stat_counts = {"Critical": 0, "High": 0, "Medium": 0, "Low": 0}
             for _, r in stats_df.iterrows():
-                risk_dist.append({"name": r['risk_level'], "value": int(r['count']), "color": color_map.get(r['risk_level'], "#ccc")})
-                stat_counts[r['risk_level']] = int(r['count'])
+                level = r['risk_level']
+                level_str = (str(level) if level is not None else "Unclassified")
+                if level_str in stat_counts:
+                    stat_counts[level_str] = int(r['count'])
+                
+                risk_dist.append({
+                    "name": level_str, 
+                    "value": int(r['count']), 
+                    "color": color_map.get(level_str, "#ccc")
+                })
 
             # 2. GEO RISK
             geo_df = pd.read_sql_query("""
                 SELECT city, AVG(risk_score) as avg_score, 
-                COUNT(*) FILTER (WHERE risk_level = 'Critical') as critical,
+                COUNT(*) FILTER (WHERE risk_level = ?) as critical,
                 COUNT(*) as total
                 FROM customers GROUP BY city ORDER BY critical DESC LIMIT 5
-            """, conn)
+            """, conn, params=('Critical',))
             geo_risk = []
             for _, r in geo_df.iterrows():
                 geo_risk.append({
@@ -299,9 +313,9 @@ class FeatureStore:
             # 3. Product Health
             prod_df = pd.read_sql_query("""
                 SELECT product_type, 
-                (CAST(COUNT(*) FILTER (WHERE risk_level IN ('Critical', 'High')) AS REAL) / COUNT(*)) * 100 as rate
+                (CAST(COUNT(*) FILTER (WHERE risk_level IN (?, ?)) AS REAL) / COUNT(*)) * 100 as rate
                 FROM customers GROUP BY product_type
-            """, conn)
+            """, conn, params=('Critical', 'High'))
             product_health = [{"productFull": r['product_type'], "delinquencyRate": round(r['rate'], 1)} for _, r in prod_df.iterrows()]
 
             # 4. Risk Trend
@@ -313,22 +327,29 @@ class FeatureStore:
             # 5. ALERTS (Signal 5 & 10 proxy)
             alerts_df = pd.read_sql_query("""
                 SELECT customer_id, name, risk_score, current_salary_delay_days, credit_utilization, risk_level, suggested_action
-                FROM customers WHERE risk_level IN ('Critical', 'High') LIMIT 15
-            """, conn)
+                FROM customers WHERE risk_level IN (?, ?) LIMIT 15
+            """, conn, params=('Critical', 'High'))
             alerts = []
             signals = []
             for _, r in alerts_df.iterrows():
                 cid = r['customer_id']
-                msg = f"Multi-Factor: Delay {r['current_salary_delay_days']}d | Util {int(r['credit_utilization'])}%"
+                delay = r.get('current_salary_delay_days', 0)
+                util = int(r.get('credit_utilization', 0))
+                
+                # Dynamic Alert Messaging
+                if delay > 10: msg = f"Liquidity Crisis: {delay}d Salary Delay detected"
+                elif util > 85: msg = f"Leverage Warning: Credit Util at {util}%"
+                elif r.get('risk_score', 0) > 80: msg = f"Multi-Agent Fusion: Critical Risk Consensus"
+                else: msg = f"Behavioral Drift: AI flagged unusual patterns"
                 
                 alerts.append({
                     "id": f"ALRT-{cid}", "customerId": cid, "customerName": r['name'],
-                    "severity": r['risk_level'], "type": "Behavioral Stress",
-                    "message": msg, "status": "active", "timestamp": "2026-02-17",
+                    "severity": r['risk_level'], "type": "Real-Time Signal",
+                    "message": msg, "status": "active", "timestamp": datetime.now().strftime('%Y-%m-%d'),
                     "suggestedAction": r['suggested_action']
                 })
                 signals.append({
-                    "time": "11:00", "severity": r['risk_level'], "signal": "Drift Detected",
+                    "time": datetime.now().strftime('%H:%M'), "severity": r['risk_level'], "signal": "Ensemble Flag",
                     "id": cid, "customer": r['name'], "message": msg
                 })
 
