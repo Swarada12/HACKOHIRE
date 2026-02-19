@@ -1,0 +1,21 @@
+service: "service:BankRiskService"
+labels:
+  owner: praeventix
+  stage: production
+include:
+  - "*.py"
+  - ".env"
+  - "*.db"
+python:
+  requirements_txt: "./requirements.txt"
+  packages:
+    - bentoml
+    - pandas
+    - xgboost
+    - lightgbm
+    - torch
+    - shap
+    - pydantic
+    - python-dotenv
+    - requests
+    - openai

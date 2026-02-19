@@ -1,0 +1,14 @@
+bentoml
+pandas
+numpy
+torch
+shap
+pydantic
+python-dotenv
+xgboost
+lightgbm
+scikit-learn
+requests
+fastapi
+uvicorn
+openai
